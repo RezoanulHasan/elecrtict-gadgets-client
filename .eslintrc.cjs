@@ -18,5 +18,6 @@ module.exports = {
     "react/prop-types": 0,
     "react/no-unescaped-entities": 0,
     "no-undef": 0,
+    "no-unused-declaration": 0,
   },
 };

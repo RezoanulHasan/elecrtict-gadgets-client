@@ -93,8 +93,8 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
   );
 
   useEffect(() => {
-    if (response?.data) {
-      setElectricGadgets(response?.data);
+    if (Array.isArray((response as any)?.data)) {
+      setElectricGadgets((response as any)?.data);
     }
   }, [response]);
 

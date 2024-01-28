@@ -9,6 +9,7 @@ interface ElectricGadgetsState {
   electricGadgets: ElectricGadget[];
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
+  message: string | null;
 }
 
 // Initial state
@@ -16,6 +17,7 @@ const initialState: ElectricGadgetsState = {
   electricGadgets: [],
   status: "idle",
   error: null,
+  message: null,
 };
 
 export const updateElectricGadget = createAsyncThunk(

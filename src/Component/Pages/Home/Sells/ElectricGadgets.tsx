@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect } from "react";
 import {
   ElectricGadget,
@@ -10,7 +11,7 @@ import useTitle from "../../../../Hooks/useTitle";
 import { FaHistory, FaShoppingCart, FaSearch } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 
-export interface ElectricGadgetsListProps {}
+interface ElectricGadgetsListProps {}
 
 const ElectricGadgets: React.FC<ElectricGadgetsListProps> = () => {
   const { data: response, isLoading, refetch } = useGetElectricGadgetsQuery();
@@ -31,11 +32,10 @@ const ElectricGadgets: React.FC<ElectricGadgetsListProps> = () => {
   useTitle("Sell Products");
 
   useEffect(() => {
-    if (response?.data) {
-      setElectricGadgets(response?.data);
+    if (Array.isArray((response as any)?.data)) {
+      setElectricGadgets((response as any)?.data);
     }
   }, [response]);
-
   useEffect(() => {
     if (showSellForm) {
       refetch();
@@ -131,7 +131,7 @@ const ElectricGadgets: React.FC<ElectricGadgetsListProps> = () => {
         </div>
 
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredGadgets?.map((gadget: ElectricGadget) => (
+          {filteredGadgets.map((gadget: ElectricGadget) => (
             <li
               key={gadget?._id}
               className="bg-white rounded-md overflow-hidden shadow-md"

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { useGetSalesHistoryQuery } from "../../../../Redux/features/sales/salesApi";
@@ -68,16 +69,15 @@ const SalesHistory: React.FC = () => {
       {isLoading && <Spinner></Spinner>}
 
       {isError && <p className="text-red-500">Please try again later.</p>}
-
-      {salesHistory?.data &&
-      Array.isArray(salesHistory?.data) &&
-      salesHistory?.data.length > 0 ? (
+      {Array.isArray((salesHistory as any)?.data) &&
+      (salesHistory as any)?.data.length > 0 ? (
+        // Render sales history when there is data
         <div>
           <h2 className="text-2xl font-bold my-4">
             Sales History for {selectedPeriod}
           </h2>
           <ul className="list-disc pl-4">
-            {salesHistory?.data.map((sale: Sale) => (
+            {(salesHistory as any)?.data.map((sale: Sale) => (
               <li key={sale._id} className="mb-4 border-b pb-4">
                 <p className="text-lg font-bold text-blue-500">
                   Product Name: {sale?.name}
@@ -97,13 +97,13 @@ const SalesHistory: React.FC = () => {
           </ul>
         </div>
       ) : (
+        // Render a message and a button when there is no sales data
         <div className="card-actions justify-center">
-          <p className="text-red-500 text-4xl font-bold mb-60">
+          <p className="text-red-500 text-4xl font-bold mb-6">
             No sales data available.
           </p>
-          <br />
           <button
-            className="btn btn-wide ml-2  bg-black text-white"
+            className="btn btn-wide ml-2 bg-black text-white"
             onClick={handleButtonClick}
           >
             Create Sell
