@@ -28,14 +28,41 @@ export interface ElectricGadgetsListProps {
     brand: string;
   };
 }
+export interface ElectricGadgetsListProps {}
+interface QueryResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: ElectricGadget[];
+}
 
 const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
   filters,
 }) => {
   useTitle("List Products");
+
+  const [response, setResponse] = useState<QueryResponse | null>(null);
+
+  const { data, isLoading, refetch } = useGetElectricGadgetsQuery();
+
+  useEffect(() => {
+    if (data) {
+      setResponse((prevResponse) => ({
+        ...prevResponse!,
+        data: data,
+      }));
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (response?.data) {
+      setElectricGadgets(response.data);
+    }
+  }, [response?.data]);
+
   const [deleteElectricGadgetMutation] = useDeleteElectricGadgetMutation();
   const [bulkDeleteMutation] = useBulkDeleteElectricGadgetsMutation();
-  const { data: response, isLoading, refetch } = useGetElectricGadgetsQuery();
+  //const { data: response, isLoading, refetch } = useGetElectricGadgetsQuery();
   const [electricGadgets, setElectricGadgets] = useState<ElectricGadget[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedBrand, setSelectedBrand] = useState<string>("");
@@ -91,12 +118,6 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
   const uniqueOperatingSystems = Array.from(
     new Set(electricGadgets.map((gadget) => gadget.operatingSystem))
   );
-
-  useEffect(() => {
-    if (response?.data) {
-      setElectricGadgets(response?.data);
-    }
-  }, [response]);
 
   if (isLoading) {
     return <Spinner />;
