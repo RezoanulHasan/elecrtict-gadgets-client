@@ -33,7 +33,7 @@ const SellForm: React.FC<SellFormProps> = ({ selectedGadget, onClose }) => {
       }
 
       // Perform the sell action
-      const newSale = await createSale({
+      createSale({
         productId: selectedGadget._id,
         quantity: quantityToSell,
         buyerName: buyerName,

@@ -77,23 +77,26 @@ const SalesHistory: React.FC = () => {
             Sales History for {selectedPeriod}
           </h2>
           <ul className="list-disc pl-4">
-            {(salesHistory as any)?.data.map((sale: Sale) => (
-              <li key={sale._id} className="mb-4 border-b pb-4">
-                <p className="text-lg font-bold text-blue-500">
-                  Product Name: {sale?.name}
-                </p>
-                <p className="text-gray-600">Quantity: {sale?.quantity}</p>
-                <p className="text-green-600 font-semibold">
-                  Total Price: ${sale?.price.toFixed(2)}
-                </p>
-                <p className="text-gray-600">Buyer Name: {sale?.buyerName}</p>
-                {sale.saleDate && (
-                  <p className="text-gray-500">
-                    Sale Date: {new Date(sale?.saleDate).toLocaleDateString()}
+            {(salesHistory as any)?.data
+              .slice()
+              .reverse()
+              .map((sale: Sale) => (
+                <li key={sale._id} className="mb-4 border-b pb-4">
+                  <p className="text-lg font-bold text-blue-500">
+                    Product Name: {sale?.name}
                   </p>
-                )}
-              </li>
-            ))}
+                  <p className="text-gray-600">Quantity: {sale?.quantity}</p>
+                  <p className="text-green-600 font-semibold">
+                    Total Price: ${sale?.price.toFixed(2)}
+                  </p>
+                  <p className="text-gray-600">Buyer Name: {sale?.buyerName}</p>
+                  {sale.saleDate && (
+                    <p className="text-gray-500">
+                      Sale Date: {new Date(sale?.saleDate).toLocaleDateString()}
+                    </p>
+                  )}
+                </li>
+              ))}
           </ul>
         </div>
       ) : (
