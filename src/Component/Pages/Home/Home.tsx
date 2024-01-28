@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import useTitle from "../../../Hooks/useTitle";
-import { Link, useNavigate } from "react-router-dom";
-import { FaList } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+
 //<ElectricGadgets></ElectricGadgets>
 //import ElectricGadgets from "./Sells/ElectricGadgets";
 //import ElectricGadgetsList from "./Management/ElectricGadgetsList";

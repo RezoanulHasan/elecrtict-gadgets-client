@@ -11,9 +11,33 @@ import { FaHistory, FaShoppingCart, FaSearch } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 
 export interface ElectricGadgetsListProps {}
+interface QueryResponse {
+  success: boolean;
+  statusCode: number;
+  message: string;
+  data: ElectricGadget[];
+}
 
 const ElectricGadgets: React.FC<ElectricGadgetsListProps> = () => {
-  const { data: response, isLoading, refetch } = useGetElectricGadgetsQuery();
+  //const { data: response, isLoading, refetch } = useGetElectricGadgetsQuery();
+  const [response, setResponse] = useState<QueryResponse | null>(null);
+
+  const { data, isLoading, refetch } = useGetElectricGadgetsQuery();
+
+  useEffect(() => {
+    if (data) {
+      setResponse((prevResponse) => ({
+        ...prevResponse!,
+        data: data,
+      }));
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (response?.data) {
+      setElectricGadgets(response.data);
+    }
+  }, [response?.data]);
   const [electricGadgets, setElectricGadgets] = useState<ElectricGadget[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [showSellForm, setShowSellForm] = useState<boolean>(false);
@@ -32,9 +56,9 @@ const ElectricGadgets: React.FC<ElectricGadgetsListProps> = () => {
 
   useEffect(() => {
     if (response?.data) {
-      setElectricGadgets(response?.data);
+      setElectricGadgets(response.data);
     }
-  }, [response]);
+  }, [response?.data]);
 
   useEffect(() => {
     if (showSellForm) {
