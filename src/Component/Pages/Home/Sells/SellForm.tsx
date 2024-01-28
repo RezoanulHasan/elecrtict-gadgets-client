@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { ElectricGadget } from "../../../../Redux/features/electricGadgets/electricGadgetsAPI";
-
+import { useCreateSaleMutation } from "../../../../Redux/features/sales/salesApi";
 import { useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import { updateGadgetQuantity } from "../../../../Redux/features/electricGadgets/electricGadgetsSlice";
@@ -17,7 +17,7 @@ const SellForm: React.FC<SellFormProps> = ({ selectedGadget, onClose }) => {
   const [buyerName, setBuyerName] = useState("");
   const [price, setPrice] = useState(0);
   const [buyerNameValid, setBuyerNameValid] = useState(true);
-
+  const [createSale, { isLoading, isError }] = useCreateSaleMutation();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -33,6 +33,13 @@ const SellForm: React.FC<SellFormProps> = ({ selectedGadget, onClose }) => {
       }
 
       // Perform the sell action
+      const newSale = await createSale({
+        productId: selectedGadget._id,
+        quantity: quantityToSell,
+        buyerName: buyerName,
+        price: price, // Include the calculated price in the payload
+        name: selectedGadget.name,
+      });
 
       // Show success message with SweetAlert2
       Swal.fire({
@@ -134,7 +141,9 @@ const SellForm: React.FC<SellFormProps> = ({ selectedGadget, onClose }) => {
           />
         </label>
 
-        <p className="text-red-500 mt-2">Error selling the product</p>
+        {isError && (
+          <p className="text-red-500 mt-2">Error selling the product</p>
+        )}
 
         <div className="sell-form-buttons mt-4 flex justify-between">
           <button
@@ -145,10 +154,14 @@ const SellForm: React.FC<SellFormProps> = ({ selectedGadget, onClose }) => {
           </button>
 
           <button
-            className={`sell-button px-4 py-2 border rounded-md bg-black hover:bg-yellow-500 ${"opacity-50 cursor-not-allowed"}`}
+            className={`sell-button px-4 py-2 border rounded-md bg-black hover:bg-yellow-500 ${
+              isLoading && "opacity-50 cursor-not-allowed"
+            }`}
             onClick={handleSell}
+            disabled={isLoading || !buyerNameValid}
           >
             <FaShoppingCart className="mr-2 text-white" />
+            {isLoading ? "Selling..." : "Sell"}
           </button>
         </div>
       </div>

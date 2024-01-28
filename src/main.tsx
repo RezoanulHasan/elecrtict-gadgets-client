@@ -8,7 +8,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
 import { Provider } from "react-redux";
 import { store, persistor } from "./Redux/store.ts";
-
+import LoginForm from "./Component/Pages/login/LoginForm.tsx";
 import SalesHistory from "./Component/Pages/Home/Sells/SalesHistory.tsx";
 import AddElectricGadgetForm from "./Component/Pages/Home/Management/AddElectricGadgetForm .tsx";
 import RegisterForm from "./Component/Pages/Registeion/RegisterForm.tsx";
@@ -25,7 +25,10 @@ const router = createBrowserRouter([
         path: "/",
         element: <Home />,
       },
-
+      {
+        path: "login",
+        element: <LoginForm />,
+      },
       {
         path: "registration",
         element: <RegisterForm></RegisterForm>,

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { useGetSalesHistoryQuery } from "../../../../Redux/features/sales/salesApi";
@@ -6,23 +5,17 @@ import Spinner from "../../../Shared/Spinner/Spinner";
 import useTitle from "../../../../Hooks/useTitle";
 import { useNavigate } from "react-router-dom";
 interface Sale {
+  price: number;
   _id?: string;
   product?: string;
   quantity?: number;
   buyerName?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  saleDate?: any; // Change the type to string
+  saleDate?: string | undefined;
   createdAt?: string | undefined;
   updatedAt?: string | undefined;
   name?: string;
-  price?: number;
 }
-interface SalesHistory {
-  success: boolean;
-  statusCode: number;
-  message: string;
-  data: Sale[];
-}
+
 const SalesHistory: React.FC = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<string>("weekly");
   const {
@@ -30,7 +23,6 @@ const SalesHistory: React.FC = () => {
     isLoading,
     isError,
   } = useGetSalesHistoryQuery(selectedPeriod);
-
   useTitle("Sells History");
 
   const navigate = useNavigate();
@@ -77,44 +69,31 @@ const SalesHistory: React.FC = () => {
 
       {isError && <p className="text-red-500">Please try again later.</p>}
 
-      {salesHistory &&
-      Array.isArray(salesHistory) &&
-      salesHistory.length > 0 ? (
+      {salesHistory?.data &&
+      Array.isArray(salesHistory?.data) &&
+      salesHistory?.data.length > 0 ? (
         <div>
           <h2 className="text-2xl font-bold my-4">
             Sales History for {selectedPeriod}
           </h2>
           <ul className="list-disc pl-4">
-            {salesHistory.map((sale: Sale) => {
-              const formattedSaleDate =
-                sale.saleDate instanceof Date
-                  ? sale.saleDate.toLocaleDateString()
-                  : sale.saleDate;
-
-              return (
-                <li key={sale._id} className="mb-4 border-b pb-4">
-                  <p className="text-lg font-bold text-blue-500">
-                    Product Name: {sale?.name || "N/A"}
+            {salesHistory?.data.map((sale: Sale) => (
+              <li key={sale._id} className="mb-4 border-b pb-4">
+                <p className="text-lg font-bold text-blue-500">
+                  Product Name: {sale?.name}
+                </p>
+                <p className="text-gray-600">Quantity: {sale?.quantity}</p>
+                <p className="text-green-600 font-semibold">
+                  Total Price: ${sale?.price.toFixed(2)}
+                </p>
+                <p className="text-gray-600">Buyer Name: {sale?.buyerName}</p>
+                {sale.saleDate && (
+                  <p className="text-gray-500">
+                    Sale Date: {new Date(sale?.saleDate).toLocaleDateString()}
                   </p>
-                  <p className="text-gray-600">
-                    Quantity: {sale?.quantity || 0}
-                  </p>
-                  {sale.price !== undefined && (
-                    <p className="text-green-600 font-semibold">
-                      Total Price: ${sale.price.toFixed(2)}
-                    </p>
-                  )}
-                  <p className="text-gray-600">
-                    Buyer Name: {sale?.buyerName || "N/A"}
-                  </p>
-                  {formattedSaleDate !== undefined && (
-                    <p className="text-gray-500">
-                      Sale Date: {formattedSaleDate}
-                    </p>
-                  )}
-                </li>
-              );
-            })}
+                )}
+              </li>
+            ))}
           </ul>
         </div>
       ) : (

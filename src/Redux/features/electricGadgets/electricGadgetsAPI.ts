@@ -30,7 +30,7 @@ export interface ElectricGadget {
   isDeleted?: boolean;
   createdAt: Date;
   updatedAt?: Date;
-
+  data: any;
   product?: any;
 }
 
