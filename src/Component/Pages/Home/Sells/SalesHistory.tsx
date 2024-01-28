@@ -5,13 +5,23 @@ import { useGetSalesHistoryQuery } from "../../../../Redux/features/sales/salesA
 import Spinner from "../../../Shared/Spinner/Spinner";
 import useTitle from "../../../../Hooks/useTitle";
 import { useNavigate } from "react-router-dom";
+import {
+  startOfWeek,
+  startOfMonth,
+  startOfYear,
+  isSameDay,
+  isSameWeek,
+  isSameMonth,
+  isSameYear,
+} from "date-fns";
+
 interface Sale {
   price: number;
   _id?: string;
   product?: string;
   quantity?: number;
   buyerName?: string;
-  saleDate?: string | undefined;
+  saleDate?: any;
   createdAt?: string | undefined;
   updatedAt?: string | undefined;
   name?: string;
@@ -41,6 +51,31 @@ const SalesHistory: React.FC = () => {
   useEffect(() => {
     console.log("Sales History Data:", salesHistory);
   }, [salesHistory]);
+
+  const isSaleInPeriod = (sale: Sale): boolean => {
+    const saleDate = new Date(sale.saleDate);
+
+    if (selectedPeriod === "daily") {
+      return isSameDay(saleDate, new Date());
+    }
+
+    if (selectedPeriod === "weekly") {
+      const startOfCurrentWeek = startOfWeek(new Date());
+      return isSameWeek(saleDate, startOfCurrentWeek);
+    }
+
+    if (selectedPeriod === "monthly") {
+      const startOfCurrentMonth = startOfMonth(new Date());
+      return isSameMonth(saleDate, startOfCurrentMonth);
+    }
+
+    if (selectedPeriod === "yearly") {
+      const startOfCurrentYear = startOfYear(new Date());
+      return isSameYear(saleDate, startOfCurrentYear);
+    }
+
+    return false;
+  };
 
   const handlePeriodChange = (newPeriod: string) => {
     setSelectedPeriod(newPeriod);
@@ -80,23 +115,33 @@ const SalesHistory: React.FC = () => {
             {(salesHistory as any)?.data
               .slice()
               .reverse()
-              .map((sale: Sale) => (
-                <li key={sale._id} className="mb-4 border-b pb-4">
-                  <p className="text-lg font-bold text-blue-500">
-                    Product Name: {sale?.name}
-                  </p>
-                  <p className="text-gray-600">Quantity: {sale?.quantity}</p>
-                  <p className="text-green-600 font-semibold">
-                    Total Price: ${sale?.price.toFixed(2)}
-                  </p>
-                  <p className="text-gray-600">Buyer Name: {sale?.buyerName}</p>
-                  {sale.saleDate && (
-                    <p className="text-gray-500">
-                      Sale Date: {new Date(sale?.saleDate).toLocaleDateString()}
-                    </p>
-                  )}
-                </li>
-              ))}
+              .map((sale: Sale) => {
+                if (isSaleInPeriod(sale)) {
+                  return (
+                    <li key={sale._id} className="mb-4 border-b pb-4">
+                      <p className="text-lg font-bold text-blue-500">
+                        Product Name: {sale?.name}
+                      </p>
+                      <p className="text-gray-600">
+                        Quantity: {sale?.quantity}
+                      </p>
+                      <p className="text-green-600 font-semibold">
+                        Total Price: ${sale?.price.toFixed(2)}
+                      </p>
+                      <p className="text-gray-600">
+                        Buyer Name: {sale?.buyerName}
+                      </p>
+                      {sale.saleDate && (
+                        <p className="text-gray-500">
+                          Sale Date:{" "}
+                          {new Date(sale?.saleDate).toLocaleDateString()}
+                        </p>
+                      )}
+                    </li>
+                  );
+                }
+                return null; // Exclude sales that don't match the selected period
+              })}
           </ul>
         </div>
       ) : (
