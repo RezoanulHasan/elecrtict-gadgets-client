@@ -55,9 +55,9 @@
 
 ### Filtering System
 
-- Filter by Price Range.(Real-time search functionality).
+- Filter by Price Range. (Real-time search functionality).
 - Filter by Release Date.
-- Filter by Brand .
+- Filter by Brand.
 - Filter by Model Number.
 - Filter by Category.
 - Filter by Operating System.
@@ -68,7 +68,7 @@
 ### Sales Management
 
 - Search for a product to sell.
-- Sell button triggers a form with fields:
+- The sell button triggers a form with fields:
   - Quantity of the product to be sold (validated against available stock).
   - Name of the buyer.
   - Date of the sale.
@@ -92,9 +92,7 @@
 
 - Button to duplicate an existing product and make modifications for creating a new one.
 
-## Getting Started
 
-Provide instructions on how to set up and run the Electric Gadgets Management Dashboard locally.
 
 ## Getting Started
 
@@ -111,4 +109,4 @@ For any inquiries or further information, please reach out to:
 - Email: rezoanulhasan96@gmail.com
 - Phone: +088 01734639066
 
-Feel free to explore the website and enjoy your experience with E lectric Gadgets Management System
+Feel free to explore the website and enjoy your experience with Electric Gadgets Management System
