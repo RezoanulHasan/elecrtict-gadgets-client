@@ -14,6 +14,8 @@ import AddElectricGadgetForm from "./Component/Pages/Home/Management/AddElectric
 import RegisterForm from "./Component/Pages/Registeion/RegisterForm.tsx";
 import ElectricGadgetsList from "./Component/Pages/Home/Management/ElectricGadgetsList.tsx";
 import ElectricGadgets from "./Component/Pages/Home/Sells/ElectricGadgets.tsx";
+import Login from "./Component/Pages/Registeion/Login.tsx";
+import ProtectedRoute from "./Hooks/ProtectedRoute.tsx";
 
 const router = createBrowserRouter([
   {
@@ -31,22 +33,45 @@ const router = createBrowserRouter([
         element: <RegisterForm></RegisterForm>,
       },
       {
+        path: "login",
+        element: <Login></Login>,
+      },
+      {
         path: "product",
-        element: <ElectricGadgetsList></ElectricGadgetsList>,
+        element: (
+          <ProtectedRoute>
+            <ElectricGadgetsList></ElectricGadgetsList>
+          </ProtectedRoute>
+        ),
       },
 
       {
-        path: "add",
-        element: <AddElectricGadgetForm></AddElectricGadgetForm>,
+        path: "add/:gadgetId",
+        element: (
+          <ProtectedRoute>
+            {" "}
+            <AddElectricGadgetForm></AddElectricGadgetForm>
+          </ProtectedRoute>
+        ),
       },
 
       {
         path: "sell",
-        element: <ElectricGadgets></ElectricGadgets>,
+        element: (
+          <ProtectedRoute>
+            {" "}
+            <ElectricGadgets></ElectricGadgets>
+          </ProtectedRoute>
+        ),
       },
       {
         path: "history",
-        element: <SalesHistory />,
+        element: (
+          <ProtectedRoute>
+            {" "}
+            <SalesHistory />
+          </ProtectedRoute>
+        ),
       },
     ],
   },

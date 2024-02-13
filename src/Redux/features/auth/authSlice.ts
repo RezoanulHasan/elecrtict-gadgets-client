@@ -1,5 +1,5 @@
 // Import necessary dependencies and types
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 
 // Define the user type based on the backend response
@@ -27,10 +27,10 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser: (state, action) => {
-      const { user, accessToken } = action.payload;
-      state.user = user;
-      state.token = accessToken;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setUser: (state, action: PayloadAction<{ token: string; user: any }>) => {
+      state.token = action.payload.token;
+      state.user = action.payload.user;
     },
     logout: (state) => {
       state.user = null;

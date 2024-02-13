@@ -28,7 +28,7 @@ export interface ElectricGadget {
   compatibleAccessories?: string[];
   createdBy?: any; // You may replace 'any' with the appropriate type
   isDeleted?: boolean;
-  createdAt: Date;
+
   updatedAt?: Date;
   data: any;
   product?: any;
@@ -39,6 +39,12 @@ export const electricGadgetsApi = baseApi.injectEndpoints({
     getElectricGadgets: builder.query<ElectricGadget[], void>({
       query: () => ({
         url: "/electric-gadgets",
+        method: "GET",
+      }),
+    }),
+    getElectricGadgetById: builder.query<ElectricGadget, string>({
+      query: (electricGadgetId) => ({
+        url: `/electric-gadgets/${electricGadgetId}`,
         method: "GET",
       }),
     }),
@@ -80,6 +86,7 @@ export const electricGadgetsApi = baseApi.injectEndpoints({
 
 export const {
   useGetElectricGadgetsQuery,
+  useGetElectricGadgetByIdQuery, // Include the new query hook
   useAddElectricGadgetMutation,
   useDeleteElectricGadgetMutation,
   useUpdateElectricGadgetMutation,

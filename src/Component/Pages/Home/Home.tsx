@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import useTitle from "../../../Hooks/useTitle";
 import { useNavigate } from "react-router-dom";
+
 //<ElectricGadgets></ElectricGadgets>
 //import ElectricGadgets from "./Sells/ElectricGadgets";
 //import ElectricGadgetsList from "./Management/ElectricGadgetsList";
@@ -16,7 +17,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
-    navigate("/registration");
+    navigate("/login");
   };
 
   return (

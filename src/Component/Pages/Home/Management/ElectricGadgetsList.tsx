@@ -14,7 +14,10 @@ import Spinner from "../../../Shared/Spinner/Spinner";
 import useTitle from "../../../../Hooks/useTitle";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
-import { FaDollarSign, FaPlus } from "react-icons/fa";
+import { FaDollarSign } from "react-icons/fa";
+
+import { useAppDispatch } from "../../../../Redux/hook";
+import { logout } from "../../../../Redux/features/auth/authSlice";
 
 export interface ElectricGadgetsListProps {
   filters?: {
@@ -33,6 +36,11 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
   filters,
 }) => {
   useTitle("List Products");
+  const dispatch = useAppDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
   const [deleteElectricGadgetMutation] = useDeleteElectricGadgetMutation();
   const [bulkDeleteMutation] = useBulkDeleteElectricGadgetsMutation();
   const { data: response, isLoading, refetch } = useGetElectricGadgetsQuery();
@@ -281,23 +289,23 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
       }
     }
   };
+
   return (
     <>
+      <div className="card-actions  mt-5 justify-end">
+        <button
+          className="btn btn-lg  btn-active btn-secondary"
+          onClick={handleLogout}
+        >
+          Logout
+        </button>{" "}
+      </div>
       <div className="container mx-auto py-8">
         <h1 className="text-4xl font-bold mb-10 text-center">
           Electric Gadgets List
         </h1>
-        <div className="container mb-5 mx-auto">
-          <h1 className="text-2xl font-bold mb-6">Add Electric Gadgets</h1>
-          <Link
-            to="/add"
-            className="flex item-center text-center bg-blue-500 text-white py-2 px-4 rounded-md mb-4"
-          >
-            <FaPlus className="mr-2" />
-            Click Here See For Add Gadget
-          </Link>
-          {/* Link to Add Gadget page with Add Gadget text and plus icon */}
 
+        <div className="container mb-5 mx-auto">
           <h1 className="text-2xl font-bold mb-6">Sell Electric Gadgets</h1>
           <Link
             to="/sell"
@@ -530,7 +538,6 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
             </div>
           </form>
         </div>
-
         {/* Gadgets List - Responsive Table */}
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-300">
@@ -579,10 +586,17 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
                     </button>
                     <button
                       onClick={() => handleDeleteClick(gadget)}
-                      className="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:shadow-outline-red"
+                      className="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:shadow-outline-red mr-2"
                     >
                       Delete
                     </button>
+
+                    <Link
+                      to={`/add/${gadget._id}`}
+                      className="bg-green-500   text-white px-2 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:shadow-outline-re"
+                    >
+                      Add
+                    </Link>
                   </td>
                 </tr>
               ))}
