@@ -1,12 +1,12 @@
 # Project: Electric Gadgets Management System
 
-## Project-Type: Full-Stack
+## Project-Type: Full-Stack Dashboard Inventory
 
 # [Live Website Link](https://zesty-chaja-ae4dcb.netlify.app/)
 
-# [Server Link ](https://electrict-gadgets.vercel.app/)
+# [Server Link ](https://elecrtict-gadgets-server.vercel.app/)
 
-# [ Vedio-link: Link ](https://drive.google.com/file/d/1_V4kyXOmLmGHlCYChngA2mGgZfC-_T_S/view?usp=sharing)
+# [ Vedio-link: Link ](https://drive.google.com/file/d/1nK1TG8RZjctnDwXM8RSrtxLk0dWS4bBx/view?usp=sharing)
 
 # [Server Git Link ](https://github.com/Porgramming-Hero-web-course/l2b2-full-stack-a5-server-side-RezoanulHasan)
 
@@ -16,6 +16,7 @@
 - typescript
 - Redux Toolkit
 - Tailwindcss
+- Ant design
 
 ## image hosting
 
@@ -46,7 +47,7 @@
 ### Authentication
 
 - User Registration and Login with JWT.
-- Single role for managing the system.
+- role for managing the dashboard system.
 
 ### Electric Gadgets Management (CRUD Operations)
 
@@ -91,8 +92,6 @@
 ### Duplicate & Edit / Create Variant
 
 - Button to duplicate an existing product and make modifications for creating a new one.
-
-
 
 ## Getting Started
 
