@@ -18,7 +18,7 @@ const baseQuery: BaseQueryFn<FetchArgs, BaseQueryApi, DefinitionType> = async (
 ): Promise<any> => {
   // Use fetchBaseQuery to make HTTP requests
   const result = await fetchBaseQuery({
-    baseUrl: "https://elecrtict-gadgets-server.vercel.app/api",
+    baseUrl: "http://localhost:5000/api",
     credentials: "include",
     prepareHeaders: (headers) => {
       const token = (api.getState() as RootState).auth.token;
@@ -35,13 +35,10 @@ const baseQuery: BaseQueryFn<FetchArgs, BaseQueryApi, DefinitionType> = async (
   if (result?.error?.status === 401) {
     console.log("Sending refresh token");
 
-    const res = await fetch(
-      "https://elecrtict-gadgets-server.vercel.app/api/auth/refresh-token",
-      {
-        method: "POST",
-        credentials: "include",
-      }
-    );
+    const res = await fetch("http://localhost:5000/api/auth/refresh-token", {
+      method: "POST",
+      credentials: "include",
+    });
 
     const data = await res.json();
 
@@ -57,7 +54,7 @@ const baseQuery: BaseQueryFn<FetchArgs, BaseQueryApi, DefinitionType> = async (
 
       // Retry the original request after token refresh
       const refreshedResult = await fetchBaseQuery({
-        baseUrl: "https://elecrtict-gadgets-server.vercel.app/api",
+        baseUrl: "http://localhost:5000/api",
         credentials: "include",
         prepareHeaders: (headers) => {
           const token = (api.getState() as RootState).auth.token;

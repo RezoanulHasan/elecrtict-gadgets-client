@@ -8,7 +8,7 @@ import {
   useUpdateUserByIdMutation,
 } from "../../../../Redux/features/auth/userApi";
 import Spinner from "../../../Shared/Spinner/Spinner";
-//import useTitle from "../../../../Hooks/useTitle";
+import useTitle from "../../../../Hooks/useTitle";
 
 const UserList: FC = () => {
   const { data: response, isLoading, isError, refetch } = useAllUsersQuery();
@@ -16,6 +16,8 @@ const UserList: FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [updateUserMutation] = useUpdateUserByIdMutation();
   const [, setSelectedUser] = useState<User | null>(null);
+
+  useTitle("All users");
   // Initial loading or refetching
   React.useEffect(() => {
     if (!isLoading && response) {

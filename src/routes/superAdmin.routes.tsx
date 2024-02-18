@@ -1,8 +1,9 @@
-import ElectricGadgetsList from "../Component/Pages/Home/Management/ElectricGadgetsList";
 import SalesHistory from "../Component/Pages/Dashboard/Manager/SalesHistory";
-import ElectricGadgets from "../Component/Pages/Dashboard/Manager/ElectricGadgets";
+
 import SuperAdminDashboard from "../Component/Pages/Dashboard/SuperAdmin/SuperAdminDashboard";
 import UserList from "../Component/Pages/Dashboard/SuperAdmin/UserList";
+import ElectricGadgetsSellAdmin from "../Component/Pages/Dashboard/SuperAdmin/ElectricGadgetsSellAdmin";
+import ElectricGadgetsAdminList from "../Component/Pages/Dashboard/SuperAdmin/ElectricGadgetsAdminList";
 
 export const superAdminPaths = [
   {
@@ -29,7 +30,7 @@ export const superAdminPaths = [
         name: "Product list",
 
         path: "products",
-        element: <ElectricGadgetsList></ElectricGadgetsList>,
+        element: <ElectricGadgetsAdminList></ElectricGadgetsAdminList>,
       },
     ],
   },
@@ -40,8 +41,8 @@ export const superAdminPaths = [
       {
         name: "Sell Product",
 
-        path: "allSell",
-        element: <ElectricGadgets></ElectricGadgets>,
+        path: "allSellAdmin",
+        element: <ElectricGadgetsSellAdmin></ElectricGadgetsSellAdmin>,
       },
       {
         name: "All Sell History",

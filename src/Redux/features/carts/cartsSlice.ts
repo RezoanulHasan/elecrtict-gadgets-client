@@ -1,5 +1,3 @@
-// src/features/electricGadgets/cartsSlice.ts
-
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Cart, useGetCartByIdQuery } from "./cartApi";
 

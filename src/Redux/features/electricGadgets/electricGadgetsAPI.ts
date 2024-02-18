@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/features/electricGadgets/electricGadgetsAPI.ts
 
 import { baseApi } from "../../api/baseApi";
 interface Dimensions {
@@ -29,7 +28,7 @@ export interface ElectricGadget {
   weight?: number;
   dimensions?: Dimensions;
   compatibleAccessories?: string[];
-  createdBy?: any; // You may replace 'any' with the appropriate type
+  createdBy?: any;
   isDeleted?: boolean;
 
   updatedAt?: Date;
@@ -84,6 +83,17 @@ export const electricGadgetsApi = baseApi.injectEndpoints({
     >({
       query: (newElectricGadget) => ({
         url: "/single-electric-gadgets",
+        method: "POST",
+        body: newElectricGadget,
+      }),
+    }),
+
+    addAdminElectricGadget: builder.mutation<
+      ElectricGadget,
+      Partial<ElectricGadget>
+    >({
+      query: (newElectricGadget) => ({
+        url: "/admin-electric-gadgets",
         method: "POST",
         body: newElectricGadget,
       }),
@@ -144,14 +154,18 @@ export const electricGadgetsApi = baseApi.injectEndpoints({
 });
 
 export const {
-  useGetElectricGadgetsQuery,
-  useGetElectricGadgetByIdQuery, // Include the new query hook
+  //Admin
+  useAddAdminElectricGadgetMutation,
+  //manager
   useAddElectricGadgetMutation,
+  //All
+  useGetElectricGadgetsQuery,
+  useGetElectricGadgetByIdQuery,
   useDeleteElectricGadgetMutation,
   useUpdateElectricGadgetMutation,
   useBulkDeleteElectricGadgetsMutation,
 
-  //single
+  //single user
 
   useGetSingleElectricGadgetsQuery,
   useGetSingleElectricGadgetByIdQuery,

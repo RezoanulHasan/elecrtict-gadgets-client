@@ -1,4 +1,3 @@
-// Import necessary dependencies and types
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 

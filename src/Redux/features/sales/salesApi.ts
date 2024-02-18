@@ -40,7 +40,13 @@ export const salesApi = baseApi.injectEndpoints({
         body: newSale,
       }),
     }),
-
+    createAdminSale: builder.mutation<Sale, Sale>({
+      query: (newSale) => ({
+        url: "/admin-sell",
+        method: "POST",
+        body: newSale,
+      }),
+    }),
     createManagerSale: builder.mutation<Sale, Sale>({
       query: (newSale) => ({
         url: "/sells",
@@ -56,4 +62,5 @@ export const {
   useGetSingleSalesHistoryQuery,
   useCreateSaleMutation,
   useCreateManagerSaleMutation,
+  useCreateAdminSaleMutation,
 } = salesApi;

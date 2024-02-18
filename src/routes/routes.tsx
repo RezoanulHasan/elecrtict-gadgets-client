@@ -11,6 +11,7 @@ import AddElectricGadgetForm from "../Component/Pages/Home/Management/AddElectri
 import AddSingleElectricGadgetForm from "../Component/Pages/Dashboard/User/AddSingleElectricGadgetForm ";
 import Protected from "../Hooks/Protected";
 import { superAdminPaths } from "./superAdmin.routes";
+import AddElectricGadgetAdminForm from "../Component/Pages/Dashboard/SuperAdmin/AddElectricGadgetAdminForm";
 //import ElectricGadgets from "../Component/Pages/Home/Sells/ElectricGadgets";
 
 const router = createBrowserRouter([
@@ -28,7 +29,7 @@ const router = createBrowserRouter([
     element: <RegisterForm></RegisterForm>,
   },
   {
-    path: "add",
+    path: "managerAddProduct",
     element: (
       <Protected>
         {" "}
@@ -36,9 +37,18 @@ const router = createBrowserRouter([
       </Protected>
     ),
   },
+  {
+    path: "adminAddProduct",
+    element: (
+      <Protected>
+        {" "}
+        <AddElectricGadgetAdminForm></AddElectricGadgetAdminForm>{" "}
+      </Protected>
+    ),
+  },
 
   {
-    path: "addProduct",
+    path: "userAddProduct",
     element: (
       <Protected>
         {" "}

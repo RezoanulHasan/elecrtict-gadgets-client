@@ -615,7 +615,7 @@ const SingleElectigadeList: React.FC<ElectricGadgetsListProps> = ({
                     </button>
 
                     <Link
-                      to="/addProduct"
+                      to="/userAddProduct"
                       className="bg-green-500   text-white px-2 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:shadow-outline-re"
                     >
                       Add

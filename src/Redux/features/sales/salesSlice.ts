@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Sale } from "./salesApi"; // Import the Sale interface from salesApi.ts
+import { Sale } from "./salesApi";
 
 interface SalesState {
   salesHistory: Sale[];

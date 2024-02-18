@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/features/electricGadgets/electricGadgetsAPI.ts
 
 import { baseApi } from "../../api/baseApi";
 interface Dimensions {

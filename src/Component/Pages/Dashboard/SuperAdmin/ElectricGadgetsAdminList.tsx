@@ -9,7 +9,7 @@ import {
   useDeleteElectricGadgetMutation,
   useUpdateElectricGadgetMutation,
 } from "../../../../Redux/features/electricGadgets/electricGadgetsAPI";
-import { applyFilters } from "../filter";
+
 import Spinner from "../../../Shared/Spinner/Spinner";
 import useTitle from "../../../../Hooks/useTitle";
 import Swal from "sweetalert2";
@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import galleryAnimation from "../../../../Hooks/GallerySection";
 import { motion } from "framer-motion";
+import { applyFilters } from "../../Home/filter";
 
 export interface ElectricGadgetsListProps {
   filters?: {
@@ -31,7 +32,7 @@ export interface ElectricGadgetsListProps {
   };
 }
 
-const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
+const ElectricGadgetsAdminList: React.FC<ElectricGadgetsListProps> = ({
   filters,
 }) => {
   useTitle("List Products");
@@ -604,7 +605,7 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
                     </button>
 
                     <Link
-                      to="/managerAddProduct"
+                      to="/adminAddProduct"
                       className="bg-green-500   text-white px-2 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:shadow-outline-re"
                     >
                       Add
@@ -772,4 +773,4 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
   );
 };
 
-export default ElectricGadgetsList;
+export default ElectricGadgetsAdminList;
