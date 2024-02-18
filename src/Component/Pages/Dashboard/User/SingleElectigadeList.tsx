@@ -120,7 +120,7 @@ const SingleElectigadeList: React.FC<ElectricGadgetsListProps> = ({
         <div className="mt-10 ">
           <button className="btn px-10 hover:bg-red-500 bg-black text-2xl text-white">
             <a
-              href="/addProduct"
+              href="/userAddProduct"
               style={{ textDecoration: "none", color: "inherit" }}
             >
               For Add Product Click Here
