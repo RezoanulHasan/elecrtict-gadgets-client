@@ -1,14 +1,12 @@
 # Project: Electric Gadgets Management System
 
-## Project-Type: Full-Stack Dashboard Inventory
+## Project-Type: Full-Stack Dashboard Inventory Website.
 
-# [Live Website Link](https://zesty-chaja-ae4dcb.netlify.app/)
-
-# [Server Link ](https://elecrtict-gadgets-server.vercel.app/)
+# [Live Website Link](https://rezoanulonlineshop.netlify.app)
 
 # [ Vedio-link: Link ](https://drive.google.com/file/d/1nK1TG8RZjctnDwXM8RSrtxLk0dWS4bBx/view?usp=sharing)
 
-# [Server Git Link ](https://github.com/Porgramming-Hero-web-course/l2b2-full-stack-a5-server-side-RezoanulHasan)
+# [Server Git Link ](https://github.com/Porgramming-Hero-web-course/l2-b2-assignment-6-backend-RezoanulHasan)
 
 ## Technology use Frontend
 
@@ -47,7 +45,7 @@
 ### Authentication
 
 - User Registration and Login with JWT.
-- role for managing the dashboard system.
+- role for managing the dashboard system (SuperAdmin ,Manager, User).
 
 ### Electric Gadgets Management (CRUD Operations)
 
