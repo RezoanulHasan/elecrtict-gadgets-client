@@ -129,7 +129,8 @@ const electricGadgetsSlice = createSlice({
       state.status = "failed";
       state.error = action.payload;
     },
-    updateGadgetQuantity(
+
+    uptodateGadgetQuantity(
       state,
       action: PayloadAction<{ id: string; quantity: number }>
     ) {
@@ -178,7 +179,7 @@ export const {
   bulkDeleteElectricGadgetsStart,
   bulkDeleteElectricGadgetsSuccess,
   bulkDeleteElectricGadgetsFailure,
-  updateGadgetQuantity,
+  uptodateGadgetQuantity,
 } = electricGadgetsSlice.actions;
 
 export default electricGadgetsSlice.reducer;

@@ -10,13 +10,15 @@ import {
 import { RootState } from "../store";
 import { logout, setUser } from "../features/auth/authSlice";
 
+// Define the baseQuery function
 const baseQuery: BaseQueryFn<FetchArgs, BaseQueryApi, DefinitionType> = async (
   args,
   api,
   extraOptions
 ): Promise<any> => {
-  let result = await fetchBaseQuery({
-    baseUrl: "https://electrict-gadgets.vercel.app/api",
+  // Use fetchBaseQuery to make HTTP requests
+  const result = await fetchBaseQuery({
+    baseUrl: "https://elecrtict-gadgets-server.vercel.app/api",
     credentials: "include",
     prepareHeaders: (headers) => {
       const token = (api.getState() as RootState).auth.token;
@@ -29,12 +31,12 @@ const baseQuery: BaseQueryFn<FetchArgs, BaseQueryApi, DefinitionType> = async (
     },
   })(args, api, extraOptions);
 
+  // Handle token refresh if the request returns a 401 status
   if (result?.error?.status === 401) {
-    //* Send Refresh
     console.log("Sending refresh token");
 
     const res = await fetch(
-      "https://electrict-gadgets.vercel.app/api/auth/refresh-token",
+      "https://elecrtict-gadgets-server.vercel.app/api/auth/refresh-token",
       {
         method: "POST",
         credentials: "include",
@@ -53,8 +55,9 @@ const baseQuery: BaseQueryFn<FetchArgs, BaseQueryApi, DefinitionType> = async (
         })
       );
 
-      result = await fetchBaseQuery({
-        baseUrl: "https://electrict-gadgets.vercel.app/api",
+      // Retry the original request after token refresh
+      const refreshedResult = await fetchBaseQuery({
+        baseUrl: "https://elecrtict-gadgets-server.vercel.app/api",
         credentials: "include",
         prepareHeaders: (headers) => {
           const token = (api.getState() as RootState).auth.token;
@@ -66,7 +69,11 @@ const baseQuery: BaseQueryFn<FetchArgs, BaseQueryApi, DefinitionType> = async (
           return headers;
         },
       })(args, api, extraOptions);
+
+      // Use the refreshed result
+      return refreshedResult;
     } else {
+      // If token refresh fails, dispatch logout
       api.dispatch(logout());
     }
   }
@@ -74,8 +81,23 @@ const baseQuery: BaseQueryFn<FetchArgs, BaseQueryApi, DefinitionType> = async (
   return result;
 };
 
+// Define baseQueryWithRefreshToken using the original baseQuery
+const baseQueryWithRefreshToken: BaseQueryFn<
+  FetchArgs,
+  BaseQueryApi,
+  DefinitionType
+> = async (args, api, extraOptions): Promise<any> => {
+  // Use the original baseQuery
+  const result = await baseQuery(args, api, extraOptions);
+
+  // Handle additional logic if needed
+
+  return result;
+};
+
+// Create the baseApi using baseQueryWithRefreshToken
 export const baseApi = createApi({
   reducerPath: "baseApi",
-  baseQuery,
+  baseQuery: baseQueryWithRefreshToken, // Use baseQueryWithRefreshToken here
   endpoints: () => ({}),
 });

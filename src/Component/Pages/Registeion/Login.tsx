@@ -45,8 +45,8 @@ const Login: React.FC = () => {
         title: "Login Successful!",
         text: "You have been successfully logged in.",
       });
-
-      navigate(`/product`);
+      navigate(`/${user.role}/dashboard`);
+      //navigate(`/product`);
     } catch (err) {
       console.error("Login failed", err);
 
@@ -62,7 +62,13 @@ const Login: React.FC = () => {
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6">Login</h2>
+        <div className="avatar card-actions justify-center">
+          <div className="w-24 rounded-xl">
+            <img src=" https://i.pinimg.com/736x/0e/99/57/0e995765397e7594f1587413659c8e70.jpg" />
+          </div>
+        </div>
+
+        <h2 className="text-2xl text-center font-bold mb-6">Login</h2>
         <input
           type="text"
           placeholder="Username"

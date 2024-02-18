@@ -1,7 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./features/auth/authSlice";
 import electricGadgetsReducer from "./features/electricGadgets/electricGadgetsSlice"; // Import your electricGadgetsReducer
-import salesReducer from "./features/sales/salesSlice"; // Import your salesReducer
+import salesReducer from "./features/sales/salesSlice";
+import usersReducer from "./features/auth/userSlice";
+import cartsReducer from "./features/carts/cartsSlice"; // Import your salesReducer
 import { baseApi } from "./api/baseApi";
 import {
   persistReducer,
@@ -28,6 +30,8 @@ export const store = configureStore({
     auth: persistedAuthReducer,
     electricGadgets: electricGadgetsReducer,
     sales: salesReducer,
+    carts: cartsReducer,
+    users: usersReducer,
   },
   middleware: (getDefaultMiddlewares) =>
     getDefaultMiddlewares({

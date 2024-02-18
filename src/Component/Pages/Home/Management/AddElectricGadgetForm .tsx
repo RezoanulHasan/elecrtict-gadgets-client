@@ -183,23 +183,7 @@ const AddElectricGadgetForm = () => {
                 required
               />
             </div>
-            <div className="mb-4">
-              <label
-                htmlFor="category"
-                className="block text-sm font-medium text-gray-600"
-              >
-                Category:
-              </label>
-              <input
-                type="text"
-                id="category"
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="mt-1 p-2 w-full border rounded-md"
-                required
-              />
-            </div>
+
             <label
               htmlFor="quantity"
               className="block text-sm font-medium text-gray-600"

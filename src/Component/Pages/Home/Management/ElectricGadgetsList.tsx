@@ -14,10 +14,9 @@ import Spinner from "../../../Shared/Spinner/Spinner";
 import useTitle from "../../../../Hooks/useTitle";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
-import { FaDollarSign } from "react-icons/fa";
-
-import { useAppDispatch } from "../../../../Redux/hook";
-import { logout } from "../../../../Redux/features/auth/authSlice";
+import { FaSearch } from "react-icons/fa";
+import galleryAnimation from "../../../../Hooks/GallerySection";
+import { motion } from "framer-motion";
 
 export interface ElectricGadgetsListProps {
   filters?: {
@@ -36,11 +35,7 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
   filters,
 }) => {
   useTitle("List Products");
-  const dispatch = useAppDispatch();
 
-  const handleLogout = () => {
-    dispatch(logout());
-  };
   const [deleteElectricGadgetMutation] = useDeleteElectricGadgetMutation();
   const [bulkDeleteMutation] = useBulkDeleteElectricGadgetsMutation();
   const { data: response, isLoading, refetch } = useGetElectricGadgetsQuery();
@@ -70,7 +65,9 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
   const [selectedProducts, setSelectedProducts] = useState<ElectricGadget[]>(
     []
   );
-
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [minPrice, setMinPrice] = useState<number | null>(null);
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const uniqueBrands = Array.from(
     new Set(electricGadgets.map((gadget) => gadget.brand))
   );
@@ -79,9 +76,6 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
   );
   const uniqueReleaseDates = Array.from(
     new Set(electricGadgets.map((gadget) => gadget.releaseDate))
-  );
-  const uniqueWeights = Array.from(
-    new Set(electricGadgets.map((gadget) => gadget.weight))
   );
 
   const uniquePowerSources = Array.from(
@@ -111,7 +105,21 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
   }
 
   if (!electricGadgets || electricGadgets.length === 0) {
-    return <div>No electric gadgets available.</div>;
+    return (
+      <div className="text-center mt-48">
+        <p className="text-4xl    text-red-600 font-bold text-center">
+          {" "}
+          You are Not add any product. No electric gadgets available.
+        </p>
+        <div className="mt-10 ">
+          <button className="btn px-10 hover:bg-red-500 bg-black text-2xl text-white">
+            <a href="/add" style={{ textDecoration: "none", color: "inherit" }}>
+              For Add Product Click Here
+            </a>
+          </button>
+        </div>
+      </div>
+    );
   }
 
   const filteredGadgets = applyFilters(electricGadgets, {
@@ -124,7 +132,18 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
     modelNumber: selectedModelNumber,
     connectivity: selectedConnectivity,
     operatingSystem: selectedOperatingSystem,
-  }).filter((gadget) => gadget.quantity > 0);
+  })
+    .filter((gadget) => gadget.quantity > 0)
+    .filter((gadget) =>
+      gadget?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .filter((gadget) => gadget?.quantity > 0)
+    .filter((gadget) => {
+      if (minPrice !== null && maxPrice !== null) {
+        return gadget?.price >= minPrice && gadget?.price <= maxPrice;
+      }
+      return true;
+    });
 
   function handleFilterChange(arg0: string, value: string): void {
     if (arg0 === "category") {
@@ -153,16 +172,6 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
       setSelectedCategory("");
       // Clear additional properties when changing the filter
       setSelectedWeight("");
-      setSelectedPowerSource("");
-      setSelectedModelNumber("");
-      setSelectedConnectivity("");
-      setSelectedOperatingSystem("");
-    } else if (arg0 === "weight") {
-      setSelectedWeight(value);
-
-      setSelectedConnectivity("");
-      setReleaseDate("");
-      setSelectedBrand("");
       setSelectedPowerSource("");
       setSelectedModelNumber("");
       setSelectedConnectivity("");
@@ -292,32 +301,55 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
 
   return (
     <>
-      <div className="card-actions  mt-5 justify-end">
-        <button
-          className="btn btn-lg  btn-active btn-secondary"
-          onClick={handleLogout}
-        >
-          Logout
-        </button>{" "}
-      </div>
       <div className="container mx-auto py-8">
         <h1 className="text-4xl font-bold mb-10 text-center">
           Electric Gadgets List
         </h1>
 
-        <div className="container mb-5 mx-auto">
-          <h1 className="text-2xl font-bold mb-6">Sell Electric Gadgets</h1>
-          <Link
-            to="/sell"
-            className="flex items-center bg-green-500 text-white py-2 px-4 rounded-md"
-          >
-            <FaDollarSign className="mr-2" />
-            Click Here For Sell Gadget
-          </Link>
-          {/* Link to Sell Gadget page with Sell Gadget text and dollar sign icon */}
-        </div>
+        <div className="container mb-5 mx-auto"></div>
         {/* Filter Form */}
         <div className="mb-8  mt-10">
+          <div className="card-actions justify-center">
+            <div className="mb-8">
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  placeholder="Search by product name"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="text-center  font-bold    bg-black text-white border-gray-300 border-20 p-3 mr-5"
+                />
+                <FaSearch className="text-gray-600" />
+              </div>
+            </div>
+
+            <div className="mb-8">
+              <div className="flex items-center">
+                <input
+                  type="number"
+                  placeholder="Set Min Price"
+                  value={minPrice || ""}
+                  onChange={(e) =>
+                    setMinPrice(
+                      e.target.value !== "" ? parseFloat(e.target.value) : null
+                    )
+                  }
+                  className="border-2 border-gray-300 p-2 mr-2"
+                />
+                <input
+                  type="number"
+                  placeholder=" Set Max Price"
+                  value={maxPrice || ""}
+                  onChange={(e) =>
+                    setMaxPrice(
+                      e.target.value !== "" ? parseFloat(e.target.value) : null
+                    )
+                  }
+                  className="border-2 border-gray-300 p-2"
+                />
+              </div>
+            </div>
+          </div>
           <form className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             <div>
               <label
@@ -458,31 +490,6 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
 
             <div>
               <label
-                htmlFor="weightFilter"
-                className="block text-xl mt-4 font-medium text-white  border-double p-2 text-center bg-black"
-              >
-                Find Weight
-              </label>
-              <select
-                id="weightFilter"
-                value={selectedWeight}
-                onChange={(e) => handleFilterChange("weight", e.target.value)}
-              >
-                <option
-                  className="text-center font-bold bg-black text-white"
-                  value=""
-                >
-                  All Weights
-                </option>
-                {uniqueWeights.map((weight) => (
-                  <option key={weight} value={weight}>
-                    {weight}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label
                 htmlFor="releaseDateFilter"
                 className="block text-xl font-medium text-white  border-double p-2 text-center bg-black mt-4"
               >
@@ -560,7 +567,12 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
               {filteredGadgets?.map((gadget: ElectricGadget) => (
                 <tr key={gadget?._id}>
                   <td className="py-2 px-4 border-b">
-                    <img
+                    <motion.img
+                      loading="lazy"
+                      variants={galleryAnimation}
+                      initial="hidden"
+                      animate="visible"
+                      whileHover="hover"
                       src={gadget.image}
                       alt={gadget.name}
                       className="w-16 h-16 object-cover mx-auto"
@@ -592,7 +604,7 @@ const ElectricGadgetsList: React.FC<ElectricGadgetsListProps> = ({
                     </button>
 
                     <Link
-                      to={`/add/${gadget._id}`}
+                      to="/add"
                       className="bg-green-500   text-white px-2 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:shadow-outline-re"
                     >
                       Add

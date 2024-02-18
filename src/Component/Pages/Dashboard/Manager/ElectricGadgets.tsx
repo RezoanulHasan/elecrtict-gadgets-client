@@ -4,12 +4,15 @@ import {
   ElectricGadget,
   useGetElectricGadgetsQuery,
 } from "../../../../Redux/features/electricGadgets/electricGadgetsAPI";
-import SellForm from "./SellForm";
-import "./sellFrom.css";
+
+import "../../Home/Sells/sellFrom.css";
 import Spinner from "../../../Shared/Spinner/Spinner";
 import useTitle from "../../../../Hooks/useTitle";
-import { FaHistory, FaShoppingCart, FaSearch } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { FaShoppingCart, FaSearch } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import ManagerSellFrom from "../../Home/Sells/ManagerSellFrom";
+import { motion } from "framer-motion";
+import galleryAnimation from "../../../../Hooks/GallerySection";
 
 interface ElectricGadgetsListProps {}
 
@@ -52,19 +55,22 @@ const ElectricGadgets: React.FC<ElectricGadgetsListProps> = () => {
 
   const filteredGadgets = electricGadgets
     .filter((gadget) =>
-      gadget.name.toLowerCase().includes(searchTerm.toLowerCase())
+      gadget?.name?.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .filter((gadget) => gadget.quantity > 0)
+    .filter((gadget) => gadget?.quantity > 0)
     .filter((gadget) => {
       if (minPrice !== null && maxPrice !== null) {
-        return gadget.price >= minPrice && gadget.price <= maxPrice;
+        return gadget?.price >= minPrice && gadget?.price <= maxPrice;
       }
       return true;
     });
-
   const handleSellClick = (gadget: ElectricGadget) => {
     setSelectedGadget(gadget);
     setShowSellForm(true);
+    refetch();
+  };
+  const updateLocalData = (updatedGadgets: ElectricGadget[]) => {
+    setElectricGadgets(updatedGadgets);
   };
 
   const handleSellFormClose = () => {
@@ -78,16 +84,7 @@ const ElectricGadgets: React.FC<ElectricGadgetsListProps> = () => {
           Electric Gadgets List For Sell
         </h1>
 
-        <div className="container mb-10 mx-auto">
-          <h1 className="text-2xl font-bold mb-6"> See Sales History</h1>
-          <Link
-            to="/history"
-            className="flex item-center text-center bg-blue-500 text-white py-2 px-4 rounded-md mb-4"
-          >
-            <FaHistory className="mr-2" />
-            Click Here See Sales History
-          </Link>
-        </div>
+        <div className="container mb-10 mx-auto"></div>
         <div className="card-actions justify-center">
           <div className="mb-8">
             <div className="flex items-center">
@@ -132,15 +129,18 @@ const ElectricGadgets: React.FC<ElectricGadgetsListProps> = () => {
 
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredGadgets.map((gadget: ElectricGadget) => (
-            <li
-              key={gadget?._id}
-              className="bg-white rounded-md overflow-hidden shadow-md"
-            >
-              <img
+            <li key={gadget._id} className="bg-white rounded-md  shadow-md">
+              <motion.img
+                loading="lazy"
+                variants={galleryAnimation}
+                initial="hidden"
+                animate="visible"
+                whileHover="hover"
                 src={gadget.image}
                 alt={gadget.name}
-                className="w-full h-48 object-cover"
+                className="w-full h-48  "
               />
+
               <div className="p-4">
                 <h2 className="text-xl font-semibold mb-2">{gadget.name}</h2>
                 <p className="text-gray-700 mb-2">Price: ${gadget.price}</p>
@@ -169,9 +169,11 @@ const ElectricGadgets: React.FC<ElectricGadgetsListProps> = () => {
         </ul>
 
         {showSellForm && selectedGadget && (
-          <SellForm
+          <ManagerSellFrom
             selectedGadget={selectedGadget}
             onClose={handleSellFormClose}
+            refetchData={refetch}
+            updateLocalData={updateLocalData}
           />
         )}
       </div>

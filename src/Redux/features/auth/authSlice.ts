@@ -8,18 +8,24 @@ export type TUser = {
   username: string;
   email: string;
   role: string;
+  iat: number;
+  exp: number;
+  phoneNumber?: string;
+  userImage?: string;
 };
 
 // Define the authentication state type
 type TAuthState = {
   user: null | TUser;
   token: null | string;
+  users: TUser[];
 };
 
 // Set the initial state
 const initialState: TAuthState = {
   user: null,
   token: null,
+  users: [],
 };
 
 // Create the auth slice
@@ -43,3 +49,4 @@ const authSlice = createSlice({
 export const { setUser, logout } = authSlice.actions;
 export default authSlice.reducer;
 export const useCurrentToken = (state: RootState) => state.auth.token;
+export const selectCurrentUser = (state: RootState) => state.auth.user;

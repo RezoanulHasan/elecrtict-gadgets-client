@@ -20,11 +20,13 @@ interface Sale {
   _id?: string;
   product?: string;
   quantity?: number;
-  buyerName?: string;
+  buyerName: string;
+  phoneNumber: string;
   saleDate?: any;
   createdAt?: string | undefined;
   updatedAt?: string | undefined;
   name?: string;
+  image?: string;
 }
 
 const SalesHistory: React.FC = () => {
@@ -34,15 +36,39 @@ const SalesHistory: React.FC = () => {
     isLoading,
     isError,
   } = useGetSalesHistoryQuery(selectedPeriod);
-  useTitle("Sells History");
+  useTitle("All Sells History");
 
   const navigate = useNavigate();
   const back = () => {
     navigate(-1);
   };
   const handleButtonClick = () => {
-    navigate("/sell");
+    navigate("/manager/allSell");
   };
+
+  // State variables for total product, total price, and total quantity
+  const [totalProduct, setTotalProduct] = useState<number>(0);
+  const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [totalQuantity, setTotalQuantity] = useState<number>(0);
+
+  useEffect(() => {
+    // Calculate total product, total price, and total quantity when salesHistory changes
+    if (Array.isArray((salesHistory as any)?.data)) {
+      const totalProductCount = (salesHistory as any).data.length;
+      const totalQuantityCount = (salesHistory as any).data.reduce(
+        (total: number, sale: Sale) => total + (sale.quantity || 0),
+        0
+      );
+      const totalPriceCount = (salesHistory as any).data.reduce(
+        (total: number, sale: Sale) => total + (sale.price || 0),
+        0
+      );
+
+      setTotalProduct(totalProductCount);
+      setTotalQuantity(totalQuantityCount);
+      setTotalPrice(totalPriceCount);
+    }
+  }, [salesHistory]);
 
   useEffect(() => {
     console.log("Selected Period:", selectedPeriod);
@@ -86,7 +112,27 @@ const SalesHistory: React.FC = () => {
       <h1 className="text-3xl  text-center text-blue-500 font-bold my-4">
         Sales History
       </h1>
-
+      <div className="flex flex-wrap justify-between mb-4">
+        <div className="w-full sm:w-auto mb-4 sm:mb-0">
+          <h1 className="text-3xl text-center font-bold my-4">
+            Total Product:{" "}
+            <span className=" text-blue-500"> {totalProduct}</span>
+          </h1>
+        </div>
+        <div className="w-full sm:w-auto mb-4 sm:mb-0">
+          <h1 className="text-3xl text-center font-bold my-4">
+            Total Price:
+            <span className=" text-red-500"> $ </span>
+            <span className=" text-blue-500">{totalPrice.toFixed(2)}</span>
+          </h1>{" "}
+        </div>
+        <div className="w-full sm:w-auto">
+          <h1 className="text-3xl text-center font-bold my-4">
+            Total Quantity
+            <span className=" text-blue-500">: {totalQuantity}</span>
+          </h1>
+        </div>
+      </div>{" "}
       <div className="mb-4">
         <label className="mr-2">Select Period:</label>
         <select
@@ -100,9 +146,7 @@ const SalesHistory: React.FC = () => {
           <option value="yearly">Yearly</option>
         </select>
       </div>
-
       {isLoading && <Spinner></Spinner>}
-
       {isError && <p className="text-red-500">Please try again later.</p>}
       {Array.isArray((salesHistory as any)?.data) &&
       (salesHistory as any)?.data.length > 0 ? (
@@ -118,25 +162,42 @@ const SalesHistory: React.FC = () => {
               .map((sale: Sale) => {
                 if (isSaleInPeriod(sale)) {
                   return (
-                    <li key={sale._id} className="mb-4 border-b pb-4">
-                      <p className="text-lg font-bold text-blue-500">
-                        Product Name: {sale?.name}
-                      </p>
-                      <p className="text-gray-600">
-                        Quantity: {sale?.quantity}
-                      </p>
-                      <p className="text-green-600 font-semibold">
-                        Total Price: ${sale?.price.toFixed(2)}
-                      </p>
-                      <p className="text-gray-600">
-                        Buyer Name: {sale?.buyerName}
-                      </p>
-                      {sale.saleDate && (
-                        <p className="text-gray-500">
-                          Sale Date:{" "}
-                          {new Date(sale?.saleDate).toLocaleDateString()}
+                    <li
+                      key={sale?._id}
+                      className="mb-4 border-b pb-4 flex items-center transition duration-300 ease-in-out hover:bg-gray-100"
+                    >
+                      {/* Image on the left side */}
+                      <img
+                        loading="lazy"
+                        src={sale?.image}
+                        alt={sale?.name}
+                        className="w-16 h-16 object-cover mr-4 rounded-full hover:shadow-md cursor-pointer"
+                      />
+
+                      {/* Sale information on the right side */}
+                      <div className="flex-1">
+                        <p className="text-lg font-bold text-blue-500">
+                          Product Name: {sale?.name}
                         </p>
-                      )}
+                        <p className="text-gray-600">
+                          Quantity: {sale?.quantity}
+                        </p>
+                        <p className="text-green-600 font-semibold">
+                          Total Price: ${sale?.price.toFixed(2)}
+                        </p>
+                        <p className="text-gray-600">
+                          Buyer Name: {sale?.buyerName}
+                        </p>
+                        <p className="text-gray-600">
+                          Phone Number: {sale?.phoneNumber}
+                        </p>
+                        {sale.saleDate && (
+                          <p className="text-gray-500">
+                            Sale Date:{" "}
+                            {new Date(sale?.saleDate).toLocaleDateString()}
+                          </p>
+                        )}
+                      </div>
                     </li>
                   );
                 }
@@ -158,7 +219,6 @@ const SalesHistory: React.FC = () => {
           </button>
         </div>
       )}
-
       <div className="text-center mt-10">
         <button
           onClick={back}
