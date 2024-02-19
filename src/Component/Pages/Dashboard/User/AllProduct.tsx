@@ -9,12 +9,18 @@ import Spinner from "../../../Shared/Spinner/Spinner";
 import useTitle from "../../../../Hooks/useTitle";
 import { FaShoppingCart, FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useAddCartMutation } from "../../../../Redux/features/carts/cartApi";
+import {
+  //Cart,
+  useAddCartMutation,
+} from "../../../../Redux/features/carts/cartApi";
 //import Swal from "sweetalert2"; // Import SweetAlert2
 import Swal from "sweetalert2";
 import { motion } from "framer-motion";
 import galleryAnimation from "../../../../Hooks/GallerySection";
-
+interface CartItem {
+  name: string;
+  // Add other properties of your cart item here
+}
 interface ElectricGadgetsListProps {}
 
 const AllProduct: React.FC<ElectricGadgetsListProps> = () => {
@@ -24,6 +30,7 @@ const AllProduct: React.FC<ElectricGadgetsListProps> = () => {
   const [minPrice, setMinPrice] = useState<number | null>(null);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
 
+  const [cart, setCart] = useState<CartItem[]>([]);
   useTitle("All Products");
   const navigate = useNavigate();
   const back = () => {
@@ -40,15 +47,36 @@ const AllProduct: React.FC<ElectricGadgetsListProps> = () => {
 
   const handleAddToCart = async (gadget: ElectricGadget) => {
     try {
+      // Check if the product is already in the cart based on the name
+      const isProductInCart = cart.some((item) => item.name === gadget.name);
+
+      if (isProductInCart) {
+        // Product is already in the cart, you can update UI accordingly
+        //console.log("Product is already in the cart");
+
+        Swal.fire({
+          icon: "warning",
+          title: "Item already in cart!",
+          showConfirmButton: false,
+          timer: 1500, // Adjust the timer as needed
+        });
+        return;
+      }
+
+      // Product is not in the cart, proceed to add
       await addCartMutation(gadget); // Call mutate function with gadget data
+
       // Optionally, show a success message
       Swal.fire({
         icon: "success",
         title: "Item added to cart successfully!",
         showConfirmButton: false,
-        timer: 1500, // Adjust the timer as needed
+        timer: 1500,
       });
-      console.log(gadget);
+      //console.log(gadget);
+
+      // Update the cart state
+      setCart([...cart, { name: gadget.name /* add other properties */ }]);
     } catch (error) {
       // Handle error, show error message, etc.
       console.error("Error adding to cart:", error);

@@ -90,6 +90,18 @@ const CartPage: React.FC<CartPageProps> = () => {
         <p className="text-red-500  font-bold text-center  mb-5  text-2xl">
           {" "}
           You have not chosen any products.
+          <div className="text-center mt-48">
+            <div className="mt-10 ">
+              <button className="btn px-10 hover:bg-red-500 bg-black text-2xl text-white">
+                <a
+                  href="/user/all"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  For Add Product Click Here
+                </a>
+              </button>
+            </div>
+          </div>
         </p>
       ) : (
         <div>

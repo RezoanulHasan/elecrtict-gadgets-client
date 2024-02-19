@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 // src/components/Login.tsx
 import React, { useState } from "react";
 import { useLoginMutation } from "../../../Redux/features/auth/authApi";
@@ -11,19 +11,10 @@ import { useAppDispatch } from "../../../Redux/hook";
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null); // Added state for error handling
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [login, { isLoading, isError, error }] = useLoginMutation();
-
-  // Define a helper function to extract error text
-  const getErrorText = (error: any): string => {
-    if (error && "message" in error && error.message) {
-      return error.message;
-    }
-
-    // Handle other types of errors or undefined
-    return "An unexpected error occurred";
-  };
+  const [login, { isLoading, isError }] = useLoginMutation();
 
   const handleLogin = async () => {
     try {
@@ -34,6 +25,13 @@ const Login: React.FC = () => {
 
       const res = await login(userInfo).unwrap();
       console.log("Backend Response:", res);
+
+      if (!res.data.accessToken) {
+        // Set an error message for invalid credentials
+        setError("Invalid username or password. Please try again.");
+        return;
+      }
+
       const user = verifyToken(res.data.accessToken) as TUser;
 
       // Assuming you have a setUser action in your Redux slice
@@ -46,16 +44,11 @@ const Login: React.FC = () => {
         text: "You have been successfully logged in.",
       });
       navigate(`/${user.role}/dashboard`);
-      //navigate(`/product`);
     } catch (err) {
       console.error("Login failed", err);
 
-      // Use SweetAlert2 for error message
-      Swal.fire({
-        icon: "error",
-        title: "Login Failed",
-        text: "Something went wrong. Please try again.",
-      });
+      // Set the error message for unexpected errors
+      setError("Invalid Username or Password");
     }
   };
 
@@ -64,7 +57,10 @@ const Login: React.FC = () => {
       <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
         <div className="avatar card-actions justify-center">
           <div className="w-24 rounded-xl">
-            <img src=" https://i.pinimg.com/736x/0e/99/57/0e995765397e7594f1587413659c8e70.jpg" />
+            <img
+              src="https://i.pinimg.com/736x/0e/99/57/0e995765397e7594f1587413659c8e70.jpg"
+              alt="avatar"
+            />
           </div>
         </div>
 
@@ -91,8 +87,8 @@ const Login: React.FC = () => {
           {isLoading ? "Logging in..." : "Login"}
         </button>
         {isError && (
-          <div className="text-red-500 text-sm mt-2">
-            Error: {getErrorText(error)}
+          <div className="text-red-500 text-lg mt-2">
+            Error: {error || "Invalid Username or Password"}
           </div>
         )}
         <div className="mt-4 text-center">

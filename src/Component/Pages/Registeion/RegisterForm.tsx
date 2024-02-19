@@ -67,7 +67,7 @@ const RegistrationForm: React.FC = () => {
       setLoading(true);
       const result = await register(formData);
       // Redirect to the product route upon successful registration
-      navigate("/product");
+      navigate("/login");
 
       console.log("Registration result:", result);
 
