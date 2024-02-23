@@ -6,7 +6,7 @@
 
 # [ Vedio-link: Link ](https://drive.google.com/file/d/1nK1TG8RZjctnDwXM8RSrtxLk0dWS4bBx/view?usp=sharing)
 
-# [Server Git Link ](https://github.com/Porgramming-Hero-web-course/l2-b2-assignment-6-backend-RezoanulHasan)
+# [Server Git Link ](https://github.com/RezoanulHasan/elecrtict-gadgets-server)
 
 ## Technology use Frontend
 
