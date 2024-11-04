@@ -39,20 +39,18 @@ const SalesHistory: React.FC = () => {
   useTitle("All Sells History");
 
   const navigate = useNavigate();
-  const back = () => {
+  const handleNavigateBack = () => {
     navigate(-1);
   };
   const handleButtonClick = () => {
     navigate("/manager/allSell");
   };
 
-  // State variables for total product, total price, and total quantity
   const [totalProduct, setTotalProduct] = useState<number>(0);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
 
   useEffect(() => {
-    // Calculate total product, total price, and total quantity when salesHistory changes
     if (Array.isArray((salesHistory as any)?.data)) {
       const totalProductCount = (salesHistory as any).data.length;
       const totalQuantityCount = (salesHistory as any).data.reduce(
@@ -70,36 +68,24 @@ const SalesHistory: React.FC = () => {
     }
   }, [salesHistory]);
 
-  useEffect(() => {
-    console.log("Selected Period:", selectedPeriod);
-  }, [selectedPeriod]);
-
-  useEffect(() => {
-    console.log("Sales History Data:", salesHistory);
-  }, [salesHistory]);
-
   const isSaleInPeriod = (sale: Sale): boolean => {
     const saleDate = new Date(sale.saleDate);
 
     if (selectedPeriod === "daily") {
       return isSameDay(saleDate, new Date());
     }
-
     if (selectedPeriod === "weekly") {
       const startOfCurrentWeek = startOfWeek(new Date());
       return isSameWeek(saleDate, startOfCurrentWeek);
     }
-
     if (selectedPeriod === "monthly") {
       const startOfCurrentMonth = startOfMonth(new Date());
       return isSameMonth(saleDate, startOfCurrentMonth);
     }
-
     if (selectedPeriod === "yearly") {
       const startOfCurrentYear = startOfYear(new Date());
       return isSameYear(saleDate, startOfCurrentYear);
     }
-
     return false;
   };
 
@@ -108,37 +94,29 @@ const SalesHistory: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="text-3xl  text-center text-blue-500 font-bold my-4">
+    <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
+      <h1 className="text-4xl text-center font-bold text-blue-600 my-6">
         Sales History
       </h1>
-      <div className="flex flex-wrap justify-between mb-4">
-        <div className="w-full sm:w-auto mb-4 sm:mb-0">
-          <h1 className="text-3xl text-center font-bold my-4">
-            Total Product:{" "}
-            <span className=" text-blue-500"> {totalProduct}</span>
-          </h1>
+      <div className="flex flex-wrap justify-between mb-6">
+        <div className="text-2xl font-semibold text-gray-800">
+          Total Product: <span className="text-blue-600">{totalProduct}</span>
         </div>
-        <div className="w-full sm:w-auto mb-4 sm:mb-0">
-          <h1 className="text-3xl text-center font-bold my-4">
-            Total Price:
-            <span className=" text-red-500"> $ </span>
-            <span className=" text-blue-500">{totalPrice.toFixed(2)}</span>
-          </h1>{" "}
+        <div className="text-2xl font-semibold text-gray-800">
+          Total Price:{" "}
+          <span className="text-red-500">${totalPrice.toFixed(2)}</span>
         </div>
-        <div className="w-full sm:w-auto">
-          <h1 className="text-3xl text-center font-bold my-4">
-            Total Quantity
-            <span className=" text-blue-500">: {totalQuantity}</span>
-          </h1>
+        <div className="text-2xl font-semibold text-gray-800">
+          Total Quantity: <span className="text-blue-600">{totalQuantity}</span>
         </div>
-      </div>{" "}
-      <div className="mb-4">
-        <label className="mr-2">Select Period:</label>
+      </div>
+
+      <div className="flex flex-col items-center mb-8">
+        <label className="mr-2 text-lg font-semibold">Select Period:</label>
         <select
           value={selectedPeriod}
           onChange={(e) => handlePeriodChange(e.target.value)}
-          className="border p-2"
+          className="border border-gray-300 p-2 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
           <option value="daily">Daily</option>
           <option value="weekly">Weekly</option>
@@ -146,85 +124,71 @@ const SalesHistory: React.FC = () => {
           <option value="yearly">Yearly</option>
         </select>
       </div>
-      {isLoading && <Spinner></Spinner>}
-      {isError && <p className="text-red-500">Please try again later.</p>}
-      {Array.isArray((salesHistory as any)?.data) &&
-      (salesHistory as any)?.data.length > 0 ? (
-        // Render sales history when there is data
-        <div>
-          <h2 className="text-2xl font-bold my-4">
-            Sales History for {selectedPeriod}
-          </h2>
-          <ul className="list-disc pl-4">
-            {(salesHistory as any)?.data
-              .slice()
-              .reverse()
-              .map((sale: Sale) => {
-                if (isSaleInPeriod(sale)) {
-                  return (
-                    <li
-                      key={sale?._id}
-                      className="mb-4 border-b pb-4 flex items-center transition duration-300 ease-in-out hover:bg-gray-100"
-                    >
-                      {/* Image on the left side */}
-                      <img
-                        loading="lazy"
-                        src={sale?.image}
-                        alt={sale?.name}
-                        className="w-16 h-16 object-cover mr-4 rounded-full hover:shadow-md cursor-pointer"
-                      />
 
-                      {/* Sale information on the right side */}
-                      <div className="flex-1">
-                        <p className="text-lg font-bold text-blue-500">
-                          Product Name: {sale?.name}
+      {isLoading && <Spinner />}
+      {isError && (
+        <p className="text-red-500 text-center">Please try again later.</p>
+      )}
+
+      {Array.isArray((salesHistory as any)?.data) &&
+      (salesHistory as any).data.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {(salesHistory as any).data
+            .slice()
+            .reverse()
+            .map(
+              (sale: Sale) =>
+                isSaleInPeriod(sale) && (
+                  <div
+                    key={sale._id}
+                    className="flex bg-gray-100 p-4 rounded-lg shadow hover:bg-gray-200 transition"
+                  >
+                    <img
+                      src={sale.image}
+                      alt={sale.name}
+                      className="w-20 h-20 object-cover rounded-full mr-4"
+                    />
+                    <div>
+                      <p className="text-xl font-bold text-blue-500">
+                        Product Name: {sale.name}
+                      </p>
+                      <p className="text-gray-600">Quantity: {sale.quantity}</p>
+                      <p className="text-green-600 font-semibold">
+                        Total Price: ${sale.price.toFixed(2)}
+                      </p>
+                      <p className="text-gray-600">Buyer: {sale.buyerName}</p>
+                      <p className="text-gray-600">Phone: {sale.phoneNumber}</p>
+                      {sale.saleDate && (
+                        <p className="text-gray-500">
+                          Sale Date:{" "}
+                          {new Date(sale.saleDate).toLocaleDateString()}
                         </p>
-                        <p className="text-gray-600">
-                          Quantity: {sale?.quantity}
-                        </p>
-                        <p className="text-green-600 font-semibold">
-                          Total Price: ${sale?.price.toFixed(2)}
-                        </p>
-                        <p className="text-gray-600">
-                          Buyer Name: {sale?.buyerName}
-                        </p>
-                        <p className="text-gray-600">
-                          Phone Number: {sale?.phoneNumber}
-                        </p>
-                        {sale.saleDate && (
-                          <p className="text-gray-500">
-                            Sale Date:{" "}
-                            {new Date(sale?.saleDate).toLocaleDateString()}
-                          </p>
-                        )}
-                      </div>
-                    </li>
-                  );
-                }
-                return null; // Exclude sales that don't match the selected period
-              })}
-          </ul>
+                      )}
+                    </div>
+                  </div>
+                )
+            )}
         </div>
       ) : (
-        // Render a message and a button when there is no sales data
-        <div className="card-actions justify-center">
-          <p className="text-red-500 text-4xl font-bold mb-6">
+        <div className="text-center mt-10">
+          <p className="text-red-500 text-2xl font-semibold mb-6">
             No sales data available.
           </p>
           <button
-            className="btn btn-wide ml-2 bg-black text-white"
             onClick={handleButtonClick}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
             Create Sell
           </button>
         </div>
       )}
+
       <div className="text-center mt-10">
         <button
-          onClick={back}
-          className="btn bg-blue-400 text-white mb-10 mt-4  center btn-lg  hover:bg-primary-700"
+          onClick={handleNavigateBack}
+          className="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-600 transition"
         >
-          Back previous page
+          Back to Previous Page
         </button>
       </div>
     </div>

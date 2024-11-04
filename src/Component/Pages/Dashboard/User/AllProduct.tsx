@@ -14,7 +14,7 @@ import { useAddCartMutation } from "../../../../Redux/features/carts/cartApi";
 import Swal from "sweetalert2";
 import { motion } from "framer-motion";
 import galleryAnimation from "../../../../Hooks/GallerySection";
-
+import { FaTag, FaBox, FaStar } from "react-icons/fa";
 interface CartItem {
   name: string;
 }
@@ -199,7 +199,7 @@ const AllProduct: React.FC = () => {
     });
 
   return (
-    <div className="container mx-auto py-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div className="container  mx-auto py-8 grid grid-cols-1 md:grid-cols-4 gap-6">
       {/* Filter Section */}
       <div className="col-span-1 bg-white p-6 rounded-md shadow-lg">
         <h2 className="text-2xl font-semibold mb-6 text-blue-600">Filters</h2>
@@ -356,26 +356,59 @@ const AllProduct: React.FC = () => {
       </div>
 
       {/* Products Section */}
-      <div className="col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6 h-96">
         {filteredGadgets.map((gadget) => (
           <motion.div
             key={gadget.id} // Assuming each gadget has a unique id
             initial="hidden"
             animate="visible"
-            variants={galleryAnimation} // Assuming you have defined this animation elsewhere
-            className="bg-white rounded-md shadow-md p-4 flex flex-col"
+            variants={galleryAnimation}
+            className="relative bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow p-4 flex flex-col"
           >
+            {/* Price Tag on Top Left */}
+            <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center space-x-1 shadow-md">
+              <FaTag />
+              <span>${gadget.price}</span>
+            </div>
+
+            {/* Image Section */}
             <img
               src={gadget.image} // Assuming each gadget has an image property
               alt={gadget.name}
               className="h-40 w-full object-cover rounded-md mb-4"
             />
-            <h3 className="text-lg font-semibold">{gadget.name}</h3>
-            <p className="text-gray-500">Brand: {gadget.brand}</p>
-            <p className="text-gray-500">Price: ${gadget.price}</p>
+
+            {/* Gadget Details */}
+            <div className="flex flex-col  space-y-1 mb-6">
+              {/* Star Rating */}
+              <div className="flex space-x-1 text-yellow-400 text-xl text-center">
+                {Array(5)
+                  .fill(null) // Provide `null` or any placeholder value here
+                  .map((_, index) => (
+                    <FaStar key={index} /> // Star icon
+                  ))}
+              </div>
+              <h3 className="text-lg font-bold text-gray-800  text-center">
+                {gadget.name}
+              </h3>
+              <p className="text-red-500 flex items-center space-x-4 mb-5 ">
+                {/* Category Icon */}
+                <span className="flex items-center space-x-1">
+                  <FaBox className="text-blue-500" /> {/* Category icon */}
+                  <span>{gadget.category}</span>
+                </span>
+                {/* Brand Icon */}
+                <span className="flex items-center space-x-1">
+                  <FaTag className="text-blue-500" /> {/* Brand icon */}
+                  <span>{gadget.brand}</span>
+                </span>
+              </p>
+            </div>
+
+            {/* Add to Cart Button */}
             <button
               onClick={() => handleAddToCart(gadget)}
-              className="mt-auto bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center justify-center"
+              className="mt-auto bg-blue-600 text-white font-semibold text-sm px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center w-full shadow-md"
             >
               <FaShoppingCart className="mr-2" />
               Add to Cart

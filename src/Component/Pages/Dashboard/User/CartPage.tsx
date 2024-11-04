@@ -12,6 +12,7 @@ import SellForm from "../../Home/Sells/SellForm";
 import useTitle from "../../../../Hooks/useTitle";
 import galleryAnimation from "../../../../Hooks/GallerySection";
 import { motion } from "framer-motion";
+
 interface CartPageProps {}
 
 const CartPage: React.FC<CartPageProps> = () => {
@@ -82,10 +83,6 @@ const CartPage: React.FC<CartPageProps> = () => {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl text-blue-500 text-center font-bold mb-7">
-        Shopping Cart
-      </h1>
-
       {cartLength === 0 ? (
         <p className="text-red-500  font-bold text-center  mb-5  text-2xl">
           {" "}
@@ -105,6 +102,10 @@ const CartPage: React.FC<CartPageProps> = () => {
         </p>
       ) : (
         <div>
+          <h1 className="text-3xl text-blue-500 text-center font-bold mb-7">
+            Shopping Cart
+          </h1>
+
           <p className="text-green-700  font-bold text-center mb-10   text-2xl">
             Number of items in the cart: {cartLength}
           </p>

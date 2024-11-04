@@ -1,19 +1,25 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from "react";
-
 import { useCreateSaleMutation } from "../../../../Redux/features/sales/salesApi";
 import { useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 
-import { FaShoppingCart } from "react-icons/fa";
+import {
+  FaShoppingCart,
+  FaTimes,
+  FaTag,
+  FaDollarSign,
+  FaUser,
+  FaPhone,
+} from "react-icons/fa";
 import { Cart } from "../../../../Redux/features/carts/cartApi";
 import { updateCartQuantity } from "../../../../Redux/features/carts/cartsSlice";
+import Magnifier from "./Magnifier";
 
 interface SellFormProps {
   selectedGadget: Cart;
   onClose: () => void;
   refetchData: () => void;
-  // Callback function for refetching data
   updateLocalData: (updatedGadgets: Cart[]) => void;
 }
 
@@ -36,46 +42,38 @@ const SellForm: React.FC<SellFormProps> = ({
   const [formValid, setFormValid] = useState(false);
 
   useEffect(() => {
-    // Update the price whenever quantity changes
     setPrice(quantityToSell * selectedGadget.price);
   }, [quantityToSell, selectedGadget.price]);
 
   const handleSell = async () => {
     try {
-      // Check if the selected quantity exceeds the available quantity
       if (quantityToSell > selectedGadget.quantity) {
         setQuantityExceedsAvailable(true);
         return;
       }
 
-      // Check if the buyer name and phone number are valid before proceeding
-      if (!buyerNameValid || !phoneNumberValid) {
-        return;
-      }
+      if (!buyerNameValid || !phoneNumberValid) return;
 
-      // Perform the sell action
       const saleResponse = await createSale({
         productId: selectedGadget._id,
         quantity: quantityToSell,
-        buyerName: buyerName,
-        phoneNumber: phoneNumber,
-        price: price,
+        buyerName,
+        phoneNumber,
+        price,
         name: selectedGadget.name,
         saleDate: selectedGadget.saleDate,
-
         image: selectedGadget.image,
-
         releaseDate: selectedGadget.releaseDate,
         brand: selectedGadget.brand,
         modelNumber: selectedGadget.modelNumber,
         category: selectedGadget.category,
       });
+
       if ("data" in saleResponse && saleResponse.data) {
         const updatedGadgets = [saleResponse.data];
         updateLocalData(updatedGadgets);
       }
 
-      // Show success message with SweetAlert2
       Swal.fire({
         icon: "success",
         title: "Sale Created Successfully!",
@@ -83,12 +81,10 @@ const SellForm: React.FC<SellFormProps> = ({
         timer: 1500,
       });
 
-      // Update the product quantity locally
       setQuantityToSell(1);
       setBuyerName("");
       setPhoneNumber("");
 
-      // Dispatch an action to update the quantity in Redux store
       dispatch(
         updateCartQuantity({
           id: selectedGadget._id ?? "",
@@ -96,13 +92,9 @@ const SellForm: React.FC<SellFormProps> = ({
         })
       );
 
-      // Refetch the data after the sale
       refetchData();
-
-      // Close the form
       onClose();
     } catch (error) {
-      // Handle errors during the sale
       console.error("Error selling product:", error);
     }
   };
@@ -128,120 +120,190 @@ const SellForm: React.FC<SellFormProps> = ({
   };
 
   return (
-    <div className="sell-form-overlay bg-gray-800 bg-opacity-75 fixed inset-0 flex items-center justify-center">
-      <div className="sell-form bg-white p-6 rounded-md shadow-md">
-        <h2 className="text-2xl font-bold mb-4">Sell {selectedGadget.name}</h2>
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-75 z-50 mb-10">
+      <div className="relative w-full mx-auto bg-white rounded-md shadow-lg overflow-hidden">
+        <button
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 transition duration-200"
+          onClick={onClose}
+        >
+          <FaTimes className="text-2xl" />
+        </button>
+        <div className="p-6 max-h-[80vh] overflow-y-auto">
+          <h2 className="text-3xl font-bold mb-6 text-center text-gray-700">
+            Sell {selectedGadget.name}
+          </h2>
 
-        <p>Available Quantity: {selectedGadget.quantity}</p>
+          <div className="flex flex-col lg:flex-row items-center lg:space-x-6  justify-between">
+            <div>
+              <div className="border border-gray-200 rounded p-4 mb-4">
+                <Magnifier
+                  imageUrl={selectedGadget.image}
+                  largeImageUrl={selectedGadget.image}
+                  zoomFactor={2}
+                  imgAlt={selectedGadget.name}
+                  glassDimension={250}
+                  glassBorderColor="#be9a35"
+                  glassBorderWidth={1}
+                />
+              </div>
 
-        <label className="block mt-4">
-          Product
-          <input
-            type="text"
-            value={selectedGadget.name}
-            readOnly
-            className="mt-1 p-2 border rounded-md w-full text-center"
-          />
-        </label>
-        <label className="block mt-4">
-          Quantity to Sell:
-          <input
-            required
-            type="number"
-            value={quantityToSell}
-            onChange={handleQuantityChange}
-            min={1}
-            max={selectedGadget.quantity}
-            className={`mt-1 p-2 border rounded-md w-full text-center ${
-              quantityExceedsAvailable && "border-red-500"
-            }`}
-          />
-          {quantityExceedsAvailable && (
-            <p className="text-red-500 mt-2">
-              Quantity cannot exceed the available quantity
-            </p>
-          )}
-        </label>
-        <label className="block mt-4">
-          Price per Unit:
-          <input
-            type="number"
-            value={selectedGadget.price}
-            readOnly
-            className="mt-1 p-2 border rounded-md w-full text-center"
-          />
-        </label>
-        <label className="block mt-4">
-          Buyer Name:
-          <input
-            type="text"
-            value={buyerName}
-            onChange={(e) => {
-              setBuyerName(e.target.value);
-              validateBuyerName(e.target.value);
-            }}
-            className={`mt-1 p-2 border rounded-md w-full ${
-              !buyerNameValid && "border-red-500"
-            }`}
-            required
-          />
-          {!buyerNameValid && (
-            <p className="text-red-500 mt-2">Buyer Name cannot be empty</p>
-          )}
-        </label>
-        <label className="block mt-4">
-          Phone Number:
-          <input
-            type="tel"
-            value={phoneNumber}
-            onChange={(e) => {
-              setPhoneNumber(e.target.value);
-              validatePhoneNumber(e.target.value);
-            }}
-            className={`mt-1 p-2 border rounded-md w-full ${
-              !phoneNumberValid && "border-red-500"
-            }`}
-            required
-          />
-          {!phoneNumberValid && (
-            <p className="text-red-500 mt-2">
-              Phone Number must be 11 characters long and cannot be empty
-            </p>
-          )}
-        </label>
-        <label className="block mt-4">
-          Total Price:
-          <input
-            type="text"
-            value={`$${price.toFixed(2)}`}
-            readOnly
-            className="mt-1 p-2 border rounded-md w-full text-center"
-          />
-        </label>
+              <div className="space-y-4">
+                <h2 className="text-2xl font-bold mb-2 ">
+                  {selectedGadget.name}
+                </h2>
+                {[
+                  {
+                    label: "Price",
 
-        {isError && (
-          <p className="text-red-500 mt-2">Error selling the product</p>
-        )}
+                    value: `$${selectedGadget.price}`,
+                  },
+                  { label: "Brand", value: selectedGadget.brand },
+                  { label: "Model Number", value: selectedGadget.modelNumber },
+                  { label: "Release Date", value: selectedGadget.releaseDate },
+                  { label: "Category", value: selectedGadget.category },
+                  {
+                    label: "Operating System",
+                    value: selectedGadget.operatingSystem,
+                  },
+                  { label: "Connectivity", value: selectedGadget.connectivity },
+                  { label: "Power Source", value: selectedGadget.powerSource },
+                  { label: "Weight", value: `${selectedGadget.weight}g` },
+                ].map((item, index) => (
+                  <div
+                    className="flex justify-between border-b pb-2"
+                    key={index}
+                  >
+                    <span className="font-semibold text-xl text-teal-500">
+                      {item.label}:
+                    </span>
+                    <span className="font-semibold text-xl text-blue-400">
+                      {item.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-        <div className="sell-form-buttons mt-4 flex justify-between">
-          <button
-            className="cancel-button px-4 py-2 border rounded-md bg-gray-300 hover:bg-gray-400"
-            onClick={onClose}
-          >
-            Cancel
-          </button>
-
-          <button
-            className={`sell-button px-4 py-2 border rounded-md bg-black hover:bg-yellow-500 ${
-              (isLoading || !formValid || quantityExceedsAvailable) &&
-              "opacity-50 cursor-not-allowed"
-            }`}
-            onClick={handleSell}
-            disabled={isLoading || !formValid || quantityExceedsAvailable}
-          >
-            <FaShoppingCart className="mr-2 text-white" />
-            {isLoading ? "Selling..." : "Sell"}
-          </button>
+            <div className="w-full lg:w-1/2">
+              <h1 className="text-3xl font-bold mb-6 text-center text-gray-700">
+                BY NOW
+              </h1>
+              <form className="space-y-4 mt-4">
+                <div>
+                  <FaTag className="inline-block mr-2 text-gray-500" />
+                  Product
+                  <input
+                    type="text"
+                    value={selectedGadget.name}
+                    readOnly
+                    className="mt-1 p-2 border rounded-md w-full text-center"
+                  />
+                </div>
+                <div>
+                  <FaShoppingCart className="inline-block mr-2 text-gray-500" />
+                  Quantity to Sell:
+                  <input
+                    required
+                    type="number"
+                    value={quantityToSell}
+                    onChange={handleQuantityChange}
+                    min={1}
+                    max={selectedGadget.quantity}
+                    className={`mt-1 p-2 border rounded-md w-full text-center ${
+                      quantityExceedsAvailable ? "border-red-500" : ""
+                    }`}
+                  />
+                  {quantityExceedsAvailable && (
+                    <p className="text-red-500 text-sm mt-1">
+                      Quantity cannot exceed available stock
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <FaDollarSign className="inline-block mr-2 text-gray-500" />
+                  Price per Unit:
+                  <input
+                    type="number"
+                    value={selectedGadget.price}
+                    readOnly
+                    className="mt-1 p-2 border rounded-md w-full text-center"
+                  />
+                </div>
+                <div>
+                  <FaUser className="inline-block mr-2 text-gray-500" />
+                  Buyer Name:
+                  <input
+                    type="text"
+                    value={buyerName}
+                    onChange={(e) => {
+                      setBuyerName(e.target.value);
+                      validateBuyerName(e.target.value);
+                    }}
+                    className={`mt-1 p-2 border rounded-md w-full ${
+                      !buyerNameValid ? "border-red-500" : ""
+                    }`}
+                    required
+                  />
+                  {!buyerNameValid && (
+                    <p className="text-red-500 text-sm mt-1">
+                      Buyer name cannot be empty
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <FaPhone className="inline-block mr-2 text-gray-500" />
+                  Phone Number:
+                  <input
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={(e) => {
+                      setPhoneNumber(e.target.value);
+                      validatePhoneNumber(e.target.value);
+                    }}
+                    className={`mt-1 p-2 border rounded-md w-full ${
+                      !phoneNumberValid ? "border-red-500" : ""
+                    }`}
+                    required
+                  />
+                  {!phoneNumberValid && (
+                    <p className="text-red-500 text-sm mt-1">
+                      Phone number must be 11 characters long
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <FaDollarSign className="inline-block mr-2 text-gray-500" />
+                  Total Price:
+                  <input
+                    type="text"
+                    value={`$${price.toFixed(2)}`}
+                    readOnly
+                    className="mt-1 p-2 border rounded-md w-full text-center"
+                  />
+                </div>
+                {isError && (
+                  <p className="text-red-500 mt-2">Error selling the product</p>
+                )}
+              </form>
+              <div className="mt-6 flex justify-between space-x-2">
+                <button
+                  className="px-4 py-2 border rounded-md bg-red-500 text-white  hover:bg-gray-400 transition"
+                  onClick={onClose}
+                >
+                  Cancel
+                </button>
+                <button
+                  className={`flex items-center justify-center px-4 py-2 border p-4 rounded-md bg-blue-700 hover:bg-yellow-600 text-white transition duration-200 ${
+                    !formValid ? "cursor-not-allowed" : ""
+                  }`}
+                  onClick={handleSell}
+                  disabled={!formValid || isLoading}
+                >
+                  Sell <FaShoppingCart className="ml-2" />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

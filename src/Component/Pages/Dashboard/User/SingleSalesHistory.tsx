@@ -36,23 +36,17 @@ const SingleSalesHistory: React.FC = () => {
     isLoading,
     isError,
   } = useGetSingleSalesHistoryQuery(selectedPeriod);
-  useTitle("Sells History");
+  useTitle("Sales History");
 
   const navigate = useNavigate();
-  const back = () => {
-    navigate(-1);
-  };
-  const handleButtonClick = () => {
-    navigate("/user/all");
-  };
+  const back = () => navigate(-1);
+  const handleButtonClick = () => navigate("/user/all");
 
-  // State variables for total product, total price, and total quantity
   const [totalProduct, setTotalProduct] = useState<number>(0);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
 
   useEffect(() => {
-    // Calculate total product, total price, and total quantity when salesHistory changes
     if (Array.isArray((salesHistory as any)?.data)) {
       const totalProductCount = (salesHistory as any).data.length;
       const totalQuantityCount = (salesHistory as any).data.reduce(
@@ -70,73 +64,36 @@ const SingleSalesHistory: React.FC = () => {
     }
   }, [salesHistory]);
 
-  useEffect(() => {
-    console.log("Selected Period:", selectedPeriod);
-  }, [selectedPeriod]);
-
-  useEffect(() => {
-    console.log("Sales History Data:", salesHistory);
-  }, [salesHistory]);
-
   const isSaleInPeriod = (sale: Sale): boolean => {
     const saleDate = new Date(sale.saleDate);
 
-    if (selectedPeriod === "daily") {
-      return isSameDay(saleDate, new Date());
+    switch (selectedPeriod) {
+      case "daily":
+        return isSameDay(saleDate, new Date());
+      case "weekly":
+        return isSameWeek(saleDate, startOfWeek(new Date()));
+      case "monthly":
+        return isSameMonth(saleDate, startOfMonth(new Date()));
+      case "yearly":
+        return isSameYear(saleDate, startOfYear(new Date()));
+      default:
+        return false;
     }
-
-    if (selectedPeriod === "weekly") {
-      const startOfCurrentWeek = startOfWeek(new Date());
-      return isSameWeek(saleDate, startOfCurrentWeek);
-    }
-
-    if (selectedPeriod === "monthly") {
-      const startOfCurrentMonth = startOfMonth(new Date());
-      return isSameMonth(saleDate, startOfCurrentMonth);
-    }
-
-    if (selectedPeriod === "yearly") {
-      const startOfCurrentYear = startOfYear(new Date());
-      return isSameYear(saleDate, startOfCurrentYear);
-    }
-
-    return false;
   };
 
-  const handlePeriodChange = (newPeriod: string) => {
+  const handlePeriodChange = (newPeriod: string) =>
     setSelectedPeriod(newPeriod);
-  };
 
   return (
-    <div className="container mx-auto px-4">
-      <div className="flex flex-wrap justify-between mb-4">
-        <div className="w-full sm:w-auto mb-4 sm:mb-0">
-          <h1 className="text-3xl text-center font-bold my-4">
-            Total Product:{" "}
-            <span className=" text-blue-500"> {totalProduct}</span>
-          </h1>
-        </div>
-        <div className="w-full sm:w-auto mb-4 sm:mb-0">
-          <h1 className="text-3xl text-center font-bold my-4">
-            Total Price:
-            <span className=" text-red-500"> $ </span>
-            <span className=" text-blue-500">{totalPrice.toFixed(2)}</span>
-          </h1>{" "}
-        </div>
-        <div className="w-full sm:w-auto">
-          <h1 className="text-3xl text-center font-bold my-4">
-            Total Quantity
-            <span className=" text-blue-500">: {totalQuantity}</span>
-          </h1>
-        </div>
-      </div>
-
-      <div className="mb-4">
-        <label className="mr-2">Select Period:</label>
+    <div>
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-6">
+        <h1 className="text-2xl md:text-3xl font-semibold text-center text-gray-800">
+          Sales Summary
+        </h1>
         <select
           value={selectedPeriod}
           onChange={(e) => handlePeriodChange(e.target.value)}
-          className="border p-2"
+          className="p-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500"
         >
           <option value="daily">Daily</option>
           <option value="weekly">Weekly</option>
@@ -145,72 +102,87 @@ const SingleSalesHistory: React.FC = () => {
         </select>
       </div>
 
-      {isLoading && <Spinner></Spinner>}
+      <div className="grid md:grid-cols-3 gap-6 text-center mb-8">
+        <div className="p-4 bg-blue-100 rounded-lg shadow-md">
+          <p className="text-gray-600">Total Products</p>
+          <p className="text-2xl font-bold text-blue-600">{totalProduct}</p>
+        </div>
+        <div className="p-4 bg-green-100 rounded-lg shadow-md">
+          <p className="text-gray-600">Total Price</p>
+          <p className="text-2xl font-bold text-green-600">
+            ${totalPrice.toFixed(2)}
+          </p>
+        </div>
+        <div className="p-4 bg-yellow-100 rounded-lg shadow-md">
+          <p className="text-gray-600">Total Quantity</p>
+          <p className="text-2xl font-bold text-yellow-600">{totalQuantity}</p>
+        </div>
+      </div>
+
+      {isLoading && <Spinner />}
 
       {isError && <p className="text-red-500">Please try again later.</p>}
+
       {Array.isArray((salesHistory as any)?.data) &&
       (salesHistory as any)?.data.length > 0 ? (
-        // Render sales history when there is data
-
-        <div>
-          <h2 className="text-2xl font-bold my-4">
-            Sales History for {selectedPeriod}
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold text-gray-700">
+            Sales History for{" "}
+            {selectedPeriod.charAt(0).toUpperCase() + selectedPeriod.slice(1)}
           </h2>
-          <ul className="list-disc pl-4">
-            {(salesHistory as any)?.data
+          <ul className="space-y-6">
+            {(salesHistory as any).data
               .slice()
               .reverse()
-              .map((sale: Sale) => {
-                if (isSaleInPeriod(sale)) {
-                  return (
+              .map(
+                (sale: Sale) =>
+                  isSaleInPeriod(sale) && (
                     <li
                       key={sale?._id}
-                      className="mb-4 border-b pb-5 rounded-md flex items-center transition duration-300 ease-in-out hover:bg-black hover:text-white"
+                      className="p-6 bg-white rounded-lg shadow-md flex gap-4 hover:bg-gray-50 transition"
                     >
-                      {/* Image on the left side */}
                       <img
                         loading="lazy"
                         src={sale?.image}
                         alt={sale?.name}
-                        className="w-16 h-16 object-cover mr-4 rounded-full hover:shadow-md cursor-pointer"
+                        className="w-16 h-16 rounded-full object-cover shadow-sm"
                       />
-
-                      {/* Sale information on the right side */}
-                      <div className="flex-1">
-                        <p className="text-lg font-bold ">
+                      <div className="flex flex-col justify-center">
+                        <p className="text-lg font-medium text-gray-800">
                           Product Name: {sale?.name}
                         </p>
-                        <p className="">Quantity: {sale?.quantity}</p>
-                        <p className="text-green-600 font-semibold">
+                        <p className="text-sm text-gray-600">
+                          Quantity: {sale?.quantity}
+                        </p>
+                        <p className="text-sm text-green-600 font-semibold">
                           Total Price: ${sale?.price.toFixed(2)}
                         </p>
-                        <p className="">Buyer Name: {sale?.buyerName}</p>
-                        <p className="">Phone Number: {sale?.phoneNumber}</p>
+                        <p className="text-sm text-gray-600">
+                          Buyer Name: {sale?.buyerName}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Phone: {sale?.phoneNumber}
+                        </p>
                         {sale.saleDate && (
-                          <p className="text-green-500 font-semibold">
+                          <p className="text-xs text-gray-500">
                             Sale Date:{" "}
                             {new Date(sale?.saleDate).toLocaleDateString()}
                           </p>
                         )}
                       </div>
                     </li>
-                  );
-                }
-                return null; // Exclude sales that don't match the selected period
-              })}
+                  )
+              )}
           </ul>
         </div>
       ) : (
-        // Render a message and a button when there is no sales data
-        <div className="card-actions justify-center">
-          <p className="text-red-500 text-4xl font-bold mb-6">
-            No sales data available.
-          </p>
+        <div className="text-center mt-8">
+          <p className="text-xl text-gray-600 mb-4">No sales data available.</p>
           <button
-            className="btn btn-wide ml-2 bg-black text-white"
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
             onClick={handleButtonClick}
           >
-            Create Sell
+            Create Sale
           </button>
         </div>
       )}
@@ -218,9 +190,9 @@ const SingleSalesHistory: React.FC = () => {
       <div className="text-center mt-10">
         <button
           onClick={back}
-          className="btn bg-blue-400 text-white mb-10 mt-4 center btn-lg hover:bg-primary-700"
+          className="px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition"
         >
-          Back previous page
+          Back to Previous Page
         </button>
       </div>
     </div>
