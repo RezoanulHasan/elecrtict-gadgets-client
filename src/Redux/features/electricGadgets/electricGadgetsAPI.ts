@@ -36,6 +36,35 @@ export interface ElectricGadget {
   product?: any;
 }
 
+export interface ElectricGadgets {
+  data?: any;
+
+  saleDate: Date;
+  _id?: any;
+  id?: any;
+  name: string;
+  price: number;
+  image?: string;
+  quantity: number;
+  releaseDate: string;
+  brand: string;
+  modelNumber: string;
+  category: string;
+  operatingSystem: string;
+  connectivity: string;
+  powerSource: string;
+  features?: string[];
+  weight?: number;
+  dimensions?: Dimensions;
+  compatibleAccessories?: string[];
+  createdBy?: any;
+  isDeleted?: boolean;
+
+  updatedAt?: Date;
+
+  product?: any;
+}
+
 export const electricGadgetsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getElectricGadgets: builder.query<ElectricGadget[], void>({

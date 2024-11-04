@@ -65,6 +65,13 @@ const Login: React.FC = () => {
         </div>
 
         <h2 className="text-2xl text-center font-bold mb-6">Login</h2>
+        <h1 className="mb-2 text-center font-semibold text-rose-500">
+          Use This Username and Password for user login
+        </h1>
+        <div className="flex justify-center gap-5 mb-2">
+          <h1>Username: Hasan</h1>
+          <h1>Password: Ri1234</h1>
+        </div>
         <input
           type="text"
           placeholder="Username"
